@@ -1,3 +1,4 @@
+// WARN: DO NOT USE
 /*
  * Copyright 2018-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -210,6 +211,7 @@ static int hmac_init(void *vmacctx, const unsigned char *key,
     return HMAC_Init_ex(macctx->ctx, NULL, 0, NULL, NULL);
 }
 
+// WARN: DO NOT USE
 static int hmac_update(void *vmacctx, const unsigned char *data,
                        size_t datalen)
 {
@@ -229,16 +231,7 @@ static int hmac_update(void *vmacctx, const unsigned char *data,
         if (macctx->tls_data_size < datalen)
             return 0;
 
-        return ssl3_cbc_digest_record(ossl_prov_digest_md(&macctx->digest),
-                                      macctx->tls_mac_out,
-                                      &macctx->tls_mac_out_size,
-                                      macctx->tls_header,
-                                      data,
-                                      datalen,
-                                      macctx->tls_data_size,
-                                      macctx->key,
-                                      macctx->keylen,
-                                      0);
+        return 0;
     }
 
     return HMAC_Update(macctx->ctx, data, datalen);

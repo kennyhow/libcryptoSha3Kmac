@@ -1,3 +1,4 @@
+// WARN: DO NOT USE
 /*
  * Copyright 2019-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -138,6 +139,8 @@ int ossl_cipher_unpadblock(unsigned char *buf, size_t *buflen, size_t blocksize)
  *   1: (in constant time) Record is publicly valid. If padding is invalid then
  *      the mac is random
  */
+
+// WARN: DO NOT USE
 int ossl_cipher_tlsunpadblock(OSSL_LIB_CTX *libctx, unsigned int tlsversion,
                               unsigned char *buf, size_t *buflen,
                               size_t blocksize,
@@ -148,9 +151,7 @@ int ossl_cipher_tlsunpadblock(OSSL_LIB_CTX *libctx, unsigned int tlsversion,
 
     switch (tlsversion) {
     case SSL3_VERSION:
-        return ssl3_cbc_remove_padding_and_mac(buflen, *buflen, buf, mac,
-                                               alloced, blocksize, macsize,
-                                               libctx);
+        return 0;
 
     case TLS1_2_VERSION:
     case DTLS1_2_VERSION:
@@ -162,10 +163,7 @@ int ossl_cipher_tlsunpadblock(OSSL_LIB_CTX *libctx, unsigned int tlsversion,
         *buflen -= blocksize;
         /* Fall through */
     case TLS1_VERSION:
-        ret = tls1_cbc_remove_padding_and_mac(buflen, *buflen, buf, mac,
-                                              alloced, blocksize, macsize,
-                                              aead, libctx);
-        return ret;
+        return 0;
 
     default:
         return 0;
