@@ -2035,7 +2035,7 @@ if ($builder eq "unified") {
         my $sourced = catdir($srcdir, @curd);
         my $buildd = catdir($blddir, @curd);
 
-        if (@curd >= 1 && $curd[0] eq 'doc') {
+        if (@curd >= 1 && ($curd[0] eq 'doc' || $curd[0] == 'apps')) {
             next;
         }
 
