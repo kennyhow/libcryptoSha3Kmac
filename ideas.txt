@@ -1,0 +1,3 @@
+1 - manually resolve missing refs
+2 - find way to auto-fix lib.so files
+3 - look through config file
