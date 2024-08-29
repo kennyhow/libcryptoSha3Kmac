@@ -134,4 +134,8 @@ int main(void) {
     main2();
 }
 
+/*
+./Configure no-tests no-engine no-docs no-aria no-bf no-blake2 no-camellia no-cast no-chacha no-cmac no-des no-dh no-dsa no-ecdh no-ecdsa no-idea no-md4 no-mdc2 no-ocb no-poly1305 no-rc2 no-rc4 no-rmd160 no-scrypt no-seed no-siphash no-siv no-sm2 no-sm3 no-sm4 no-whirlpool
+*/
+
 // gcc ./main.c ./libcrypto.a -Wl,--unresolved-symbols=ignore-all && ./a.out

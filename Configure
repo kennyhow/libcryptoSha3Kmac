@@ -2027,10 +2027,17 @@ if ($builder eq "unified") {
     my %check_generate = ();
 
     my %ordinals = ();
+
+    print "BUNNY DEBUG: Build dirs: @build_dirs\n";
+
     while (@build_dirs) {
         my @curd = @{shift @build_dirs};
         my $sourced = catdir($srcdir, @curd);
         my $buildd = catdir($blddir, @curd);
+
+        if (@curd >= 1 && $curd[0] eq 'doc') {
+            next;
+        }
 
         my $unixdir = join('/', @curd);
         if (exists $skipdir{$unixdir}) {
