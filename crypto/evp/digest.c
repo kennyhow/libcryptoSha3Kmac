@@ -128,7 +128,7 @@ EVP_MD_CTX *evp_md_ctx_new_ex(EVP_PKEY *pkey, const ASN1_OCTET_STRING *id,
 
 EVP_MD_CTX *EVP_MD_CTX_new(void)
 {
-    puts("This marks a bunny change :3\n");
+    puts("This marks yet another bunny change :3\n");
     return OPENSSL_zalloc(sizeof(EVP_MD_CTX));
 }
 
