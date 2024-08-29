@@ -1173,11 +1173,6 @@ if (keys %deprecated_options)
         warn "***** Deprecated options: ",
                 join(", ", keys %deprecated_options), "\n";
         }
-if (keys %unsupported_options)
-        {
-        die "***** Unsupported options: ",
-                join(", ", keys %unsupported_options), "\n";
-        }
 
 # If any %useradd entry has been set, we must check that the "make
 # variables" haven't been set.  We start by checking of any %useradd entry
@@ -2035,7 +2030,10 @@ if ($builder eq "unified") {
         my $sourced = catdir($srcdir, @curd);
         my $buildd = catdir($blddir, @curd);
 
-        if (@curd && grep { $_ eq $curd[0] } qw(doc apps demos VMS)) {
+        my $joined = join('-', @curd);
+        print "$joined\n";
+
+        if (@curd && grep { $_ eq $joined} qw(doc apps demos VMS)) {
             next;
         }
 
