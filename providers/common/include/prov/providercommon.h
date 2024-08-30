@@ -12,9 +12,6 @@
 
 const OSSL_CORE_HANDLE *FIPS_get_core_handle(OSSL_LIB_CTX *ctx);
 
-int ossl_cipher_capable_aes_cbc_hmac_sha1(void);
-int ossl_cipher_capable_aes_cbc_hmac_sha256(void);
-
 OSSL_FUNC_provider_get_capabilities_fn ossl_prov_get_capabilities;
 
 /* Set the error state if this is a FIPS module */

@@ -285,68 +285,6 @@ static const OSSL_ALGORITHM fips_digests[] = {
     { NULL, NULL, NULL }
 };
 
-static const OSSL_ALGORITHM_CAPABLE fips_ciphers[] = {
-    /* Our primary name[:ASN.1 OID name][:our older names] */
-    ALG(PROV_NAMES_AES_256_ECB, ossl_aes256ecb_functions),
-    ALG(PROV_NAMES_AES_192_ECB, ossl_aes192ecb_functions),
-    ALG(PROV_NAMES_AES_128_ECB, ossl_aes128ecb_functions),
-    ALG(PROV_NAMES_AES_256_CBC, ossl_aes256cbc_functions),
-    ALG(PROV_NAMES_AES_192_CBC, ossl_aes192cbc_functions),
-    ALG(PROV_NAMES_AES_128_CBC, ossl_aes128cbc_functions),
-    ALG(PROV_NAMES_AES_256_CBC_CTS, ossl_aes256cbc_cts_functions),
-    ALG(PROV_NAMES_AES_192_CBC_CTS, ossl_aes192cbc_cts_functions),
-    ALG(PROV_NAMES_AES_128_CBC_CTS, ossl_aes128cbc_cts_functions),
-    ALG(PROV_NAMES_AES_256_OFB, ossl_aes256ofb_functions),
-    ALG(PROV_NAMES_AES_192_OFB, ossl_aes192ofb_functions),
-    ALG(PROV_NAMES_AES_128_OFB, ossl_aes128ofb_functions),
-    ALG(PROV_NAMES_AES_256_CFB, ossl_aes256cfb_functions),
-    ALG(PROV_NAMES_AES_192_CFB, ossl_aes192cfb_functions),
-    ALG(PROV_NAMES_AES_128_CFB, ossl_aes128cfb_functions),
-    ALG(PROV_NAMES_AES_256_CFB1, ossl_aes256cfb1_functions),
-    ALG(PROV_NAMES_AES_192_CFB1, ossl_aes192cfb1_functions),
-    ALG(PROV_NAMES_AES_128_CFB1, ossl_aes128cfb1_functions),
-    ALG(PROV_NAMES_AES_256_CFB8, ossl_aes256cfb8_functions),
-    ALG(PROV_NAMES_AES_192_CFB8, ossl_aes192cfb8_functions),
-    ALG(PROV_NAMES_AES_128_CFB8, ossl_aes128cfb8_functions),
-    ALG(PROV_NAMES_AES_256_CTR, ossl_aes256ctr_functions),
-    ALG(PROV_NAMES_AES_192_CTR, ossl_aes192ctr_functions),
-    ALG(PROV_NAMES_AES_128_CTR, ossl_aes128ctr_functions),
-    ALG(PROV_NAMES_AES_256_XTS, ossl_aes256xts_functions),
-    ALG(PROV_NAMES_AES_128_XTS, ossl_aes128xts_functions),
-    ALG(PROV_NAMES_AES_256_GCM, ossl_aes256gcm_functions),
-    ALG(PROV_NAMES_AES_192_GCM, ossl_aes192gcm_functions),
-    ALG(PROV_NAMES_AES_128_GCM, ossl_aes128gcm_functions),
-    ALG(PROV_NAMES_AES_256_CCM, ossl_aes256ccm_functions),
-    ALG(PROV_NAMES_AES_192_CCM, ossl_aes192ccm_functions),
-    ALG(PROV_NAMES_AES_128_CCM, ossl_aes128ccm_functions),
-    ALG(PROV_NAMES_AES_256_WRAP, ossl_aes256wrap_functions),
-    ALG(PROV_NAMES_AES_192_WRAP, ossl_aes192wrap_functions),
-    ALG(PROV_NAMES_AES_128_WRAP, ossl_aes128wrap_functions),
-    ALG(PROV_NAMES_AES_256_WRAP_PAD, ossl_aes256wrappad_functions),
-    ALG(PROV_NAMES_AES_192_WRAP_PAD, ossl_aes192wrappad_functions),
-    ALG(PROV_NAMES_AES_128_WRAP_PAD, ossl_aes128wrappad_functions),
-    ALG(PROV_NAMES_AES_256_WRAP_INV, ossl_aes256wrapinv_functions),
-    ALG(PROV_NAMES_AES_192_WRAP_INV, ossl_aes192wrapinv_functions),
-    ALG(PROV_NAMES_AES_128_WRAP_INV, ossl_aes128wrapinv_functions),
-    ALG(PROV_NAMES_AES_256_WRAP_PAD_INV, ossl_aes256wrappadinv_functions),
-    ALG(PROV_NAMES_AES_192_WRAP_PAD_INV, ossl_aes192wrappadinv_functions),
-    ALG(PROV_NAMES_AES_128_WRAP_PAD_INV, ossl_aes128wrappadinv_functions),
-    ALGC(PROV_NAMES_AES_128_CBC_HMAC_SHA1, ossl_aes128cbc_hmac_sha1_functions,
-         ossl_cipher_capable_aes_cbc_hmac_sha1),
-    ALGC(PROV_NAMES_AES_256_CBC_HMAC_SHA1, ossl_aes256cbc_hmac_sha1_functions,
-         ossl_cipher_capable_aes_cbc_hmac_sha1),
-    ALGC(PROV_NAMES_AES_128_CBC_HMAC_SHA256, ossl_aes128cbc_hmac_sha256_functions,
-         ossl_cipher_capable_aes_cbc_hmac_sha256),
-    ALGC(PROV_NAMES_AES_256_CBC_HMAC_SHA256, ossl_aes256cbc_hmac_sha256_functions,
-         ossl_cipher_capable_aes_cbc_hmac_sha256),
-#ifndef OPENSSL_NO_DES
-    ALG(PROV_NAMES_DES_EDE3_ECB, ossl_tdes_ede3_ecb_functions),
-    ALG(PROV_NAMES_DES_EDE3_CBC, ossl_tdes_ede3_cbc_functions),
-#endif  /* OPENSSL_NO_DES */
-    { { NULL, NULL, NULL }, NULL }
-};
-static OSSL_ALGORITHM exported_fips_ciphers[OSSL_NELEM(fips_ciphers)];
-
 static const OSSL_ALGORITHM fips_macs[] = {
 #ifndef OPENSSL_NO_CMAC
     { PROV_NAMES_CMAC, FIPS_DEFAULT_PROPERTIES, ossl_cmac_functions },
@@ -454,11 +392,6 @@ static const OSSL_ALGORITHM fips_signature[] = {
     { NULL, NULL, NULL }
 };
 
-static const OSSL_ALGORITHM fips_asym_cipher[] = {
-    { PROV_NAMES_RSA, FIPS_DEFAULT_PROPERTIES, ossl_rsa_asym_cipher_functions },
-    { NULL, NULL, NULL }
-};
-
 static const OSSL_ALGORITHM fips_asym_kem[] = {
     { PROV_NAMES_RSA, FIPS_DEFAULT_PROPERTIES, ossl_rsa_asym_kem_functions },
     { NULL, NULL, NULL }
@@ -517,8 +450,6 @@ static const OSSL_ALGORITHM *fips_query(void *provctx, int operation_id,
     switch (operation_id) {
     case OSSL_OP_DIGEST:
         return fips_digests;
-    case OSSL_OP_CIPHER:
-        return exported_fips_ciphers;
     case OSSL_OP_MAC:
         return fips_macs;
     case OSSL_OP_KDF:
@@ -531,8 +462,6 @@ static const OSSL_ALGORITHM *fips_query(void *provctx, int operation_id,
         return fips_keyexch;
     case OSSL_OP_SIGNATURE:
         return fips_signature;
-    case OSSL_OP_ASYM_CIPHER:
-        return fips_asym_cipher;
     case OSSL_OP_KEM:
         return fips_asym_kem;
     }
@@ -778,8 +707,6 @@ int OSSL_provider_init_int(const OSSL_CORE_HANDLE *handle,
     }
 #include "fips_indicator_params.inc"
 #undef OSSL_FIPS_PARAM
-
-    ossl_prov_cache_exported_algorithms(fips_ciphers, exported_fips_ciphers);
 
     if (!SELF_TEST_post(&fgbl->selftest_params, 0)) {
         ERR_raise(ERR_LIB_PROV, PROV_R_SELF_TEST_POST_FAILURE);
