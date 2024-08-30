@@ -4,6 +4,10 @@
         "evp.h": "c",
         "stdio.h": "c",
         "params.h": "c",
-        "core_names.h": "c"
+        "core_names.h": "c",
+        "crypto.h": "c",
+        "trace.h": "c",
+        "macros.h": "c",
+        "cryptlib.h": "c"
     }
 }

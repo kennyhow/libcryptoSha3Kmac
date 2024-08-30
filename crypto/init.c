@@ -30,7 +30,6 @@
 #include "crypto/dso_conf.h"
 #include "internal/dso.h"
 #include "crypto/store.h"
-#include <openssl/cmp_util.h> /* for OSSL_CMP_log_close() */
 #include <openssl/trace.h>
 #include "crypto/ctype.h"
 

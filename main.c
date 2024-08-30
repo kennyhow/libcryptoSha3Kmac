@@ -161,6 +161,6 @@ make build_generated && make libcrypto.a
 
 gcc ./main.c ./libcrypto.a -Wl,--unresolved-symbols=ignore-all && ./a.out
 OR
-gcc ./main.c ./libcrypto.a && ./a.out
+gcc ./main.c ./libcrypto.a -I/home/rabbitsthecat/openssl/include -I/home/rabbitsthecat/openssl && ./a.out
 */
 
