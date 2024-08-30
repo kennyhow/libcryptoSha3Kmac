@@ -362,12 +362,6 @@ extern const OSSL_DISPATCH ossl_mac_legacy_poly1305_signature_functions[];
 extern const OSSL_DISPATCH ossl_mac_legacy_cmac_signature_functions[];
 extern const OSSL_DISPATCH ossl_sm2_signature_functions[];
 
-/* Asym Cipher */
-extern const OSSL_DISPATCH ossl_rsa_asym_cipher_functions[];
-#ifndef OPENSSL_NO_SM2
-extern const OSSL_DISPATCH ossl_sm2_asym_cipher_functions[];
-#endif
-
 /* Asym Key encapsulation  */
 extern const OSSL_DISPATCH ossl_rsa_asym_kem_functions[];
 extern const OSSL_DISPATCH ossl_ecx_asym_kem_functions[];

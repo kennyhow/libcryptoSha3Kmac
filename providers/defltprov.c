@@ -284,13 +284,6 @@ static const OSSL_ALGORITHM deflt_signature[] = {
     { NULL, NULL, NULL }
 };
 
-static const OSSL_ALGORITHM deflt_asym_cipher[] = {
-    { PROV_NAMES_RSA, "provider=default", ossl_rsa_asym_cipher_functions },
-#ifndef OPENSSL_NO_SM2
-    { PROV_NAMES_SM2, "provider=default", ossl_sm2_asym_cipher_functions },
-#endif
-    { NULL, NULL, NULL }
-};
 
 static const OSSL_ALGORITHM deflt_asym_kem[] = {
     { PROV_NAMES_RSA, "provider=default", ossl_rsa_asym_kem_functions },
@@ -400,8 +393,6 @@ static const OSSL_ALGORITHM *deflt_query(void *provctx, int operation_id,
         return deflt_keyexch;
     case OSSL_OP_SIGNATURE:
         return deflt_signature;
-    case OSSL_OP_ASYM_CIPHER:
-        return deflt_asym_cipher;
     case OSSL_OP_KEM:
         return deflt_asym_kem;
     case OSSL_OP_ENCODER:
