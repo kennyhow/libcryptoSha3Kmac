@@ -39,7 +39,6 @@
 #include "crypto/cmserr.h"
 #include "crypto/crmferr.h"
 #include "crypto/cterr.h"
-#include "crypto/asyncerr.h"
 #include "crypto/storeerr.h"
 #include "crypto/esserr.h"
 #include "internal/propertyerr.h"
@@ -103,7 +102,7 @@ int ossl_err_load_crypto_strings(void)
         || ossl_err_load_CT_strings() == 0
 # endif
         || ossl_err_load_ESS_strings() == 0
-        || ossl_err_load_ASYNC_strings() == 0
+        //|| ossl_err_load_ASYNC_strings() == 0
         || ossl_err_load_OSSL_STORE_strings() == 0
         || ossl_err_load_PROP_strings() == 0
         || ossl_err_load_PROV_strings() == 0

@@ -19,7 +19,6 @@
 #include <openssl/evp.h>
 #include "crypto/evp.h"
 #include "internal/conf.h"
-#include "crypto/async.h"
 #include "crypto/engine.h"
 #include "internal/comp.h"
 #include "internal/err.h"
@@ -281,7 +280,7 @@ static int async_inited = 0;
 DEFINE_RUN_ONCE_STATIC(ossl_init_async)
 {
     OSSL_TRACE(INIT, "async_init()\n");
-    if (!async_init())
+    if (1)
         return 0;
     async_inited = 1;
     return 1;
@@ -407,7 +406,6 @@ void OPENSSL_cleanup(void)
 
     if (async_inited) {
         OSSL_TRACE(INIT, "OPENSSL_cleanup: async_deinit()\n");
-        async_deinit();
     }
 
     /*
