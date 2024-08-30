@@ -105,23 +105,42 @@ void print_sha3_hash(const unsigned char *message, size_t message_len) {
 
 
 int main1(void) {
-    const unsigned char key[] = "0123456789abcdef";  // 128-bit key
-    const unsigned char input[] = "hello, world";
-    unsigned char mac[32];  // Adjust size if needed
+    // Define 3 different keys with varying lengths
+    const unsigned char key1[] = "0123456789abcdef";    // 16-byte key (128 bits)
+    const unsigned char key2[] = "abcdef0123456789abcdef0123456789"; // 32-byte key (256 bits)
+    const unsigned char key3[] = "01234567";            // 8-byte key (64 bits)
+    
+    // Define 3 different messages with varying lengths
+    const unsigned char input1[] = "hello, world";       // 12 bytes
+    const unsigned char input2[] = "OpenSSL KMAC Example"; // 21 bytes
+    
+    unsigned char mac[64];  // Adjust size if needed
     int out_len = sizeof(mac);
     int xof_enabled = 0;
 
-    if (do_kmac(input, strlen((const char*)input), key, sizeof(key)-1, NULL, 0, xof_enabled, mac, out_len)) {
-        printf("MAC: ");
+    // MAC for key1 and input1
+    if (do_kmac(input1, strlen((const char*)input1), key1, sizeof(key1)-1, NULL, 0, xof_enabled, mac, out_len)) {
+        printf("MAC for input1 with key1: ");
         for (int i = 0; i < out_len; i++)
             printf("%02x", mac[i]);
         printf("\n");
     } else {
-        printf("KMAC computation failed.\n");
+        printf("KMAC computation failed for input1 with key1.\n");
+    }
+
+    // MAC for key2 and input2
+    if (do_kmac(input2, strlen((const char*)input2), key2, sizeof(key2)-1, NULL, 0, xof_enabled, mac, out_len)) {
+        printf("MAC for input2 with key2: ");
+        for (int i = 0; i < out_len; i++)
+            printf("%02x", mac[i]);
+        printf("\n");
+    } else {
+        printf("KMAC computation failed for input2 with key2.\n");
     }
 
     return 0;
 }
+
 
 int main2(void) {
     const unsigned char message[] = "hello, world";
@@ -132,6 +151,7 @@ int main2(void) {
 int main(void) {
     main1();
     main2();
+    printf("www\n");
 }
 
 /*

@@ -73,7 +73,6 @@ typedef struct {
     int use_l;
     int is_kmac;
     int use_separator;
-    OSSL_FIPS_IND_DECLARE
 } KBKDF;
 
 /* Definitions needed for typechecking. */
@@ -123,7 +122,6 @@ static void *kbkdf_new(void *provctx)
         return NULL;
 
     ctx->provctx = provctx;
-    OSSL_FIPS_IND_INIT(ctx)
     init(ctx);
     return ctx;
 }
@@ -176,7 +174,6 @@ static void *kbkdf_dup(void *vctx)
         dest->use_l = src->use_l;
         dest->use_separator = src->use_separator;
         dest->is_kmac = src->is_kmac;
-        OSSL_FIPS_IND_COPY(dest, src)
     }
     return dest;
 
@@ -372,10 +369,6 @@ static int kbkdf_set_ctx_params(void *vctx, const OSSL_PARAM params[])
     if (params == NULL)
         return 1;
 
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_KDF_PARAM_FIPS_KEY_CHECK))
-        return 0;
-
     if (!ossl_prov_macctx_load_from_params(&ctx->ctx_init, params, NULL,
                                            NULL, NULL, libctx))
         return 0;
@@ -475,7 +468,6 @@ static const OSSL_PARAM *kbkdf_settable_ctx_params(ossl_unused void *ctx,
         OSSL_PARAM_int(OSSL_KDF_PARAM_KBKDF_USE_L, NULL),
         OSSL_PARAM_int(OSSL_KDF_PARAM_KBKDF_USE_SEPARATOR, NULL),
         OSSL_PARAM_int(OSSL_KDF_PARAM_KBKDF_R, NULL),
-        OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_KDF_PARAM_FIPS_KEY_CHECK)
         OSSL_PARAM_END,
     };
     return known_settable_ctx_params;
@@ -492,9 +484,6 @@ static int kbkdf_get_ctx_params(void *vctx, OSSL_PARAM params[])
     p = OSSL_PARAM_locate(params, OSSL_KDF_PARAM_SIZE);
     if (p != NULL && !OSSL_PARAM_set_size_t(p, SIZE_MAX))
         return 0;
-
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(ctx, params))
-        return 0;
     return 1;
 }
 
@@ -503,7 +492,6 @@ static const OSSL_PARAM *kbkdf_gettable_ctx_params(ossl_unused void *ctx,
 {
     static const OSSL_PARAM known_gettable_ctx_params[] = {
         OSSL_PARAM_size_t(OSSL_KDF_PARAM_SIZE, NULL),
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_gettable_ctx_params;

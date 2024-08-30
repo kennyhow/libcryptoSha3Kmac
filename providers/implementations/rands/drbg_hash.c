@@ -424,8 +424,6 @@ static int drbg_hash_new(PROV_DRBG *ctx)
     if (hash == NULL)
         return 0;
 
-    OSSL_FIPS_IND_INIT(ctx)
-
     ctx->data = hash;
     ctx->seedlen = HASH_PRNG_MAX_SEEDLEN;
     ctx->max_entropylen = DRBG_MAX_LENGTH;
@@ -498,7 +496,6 @@ static const OSSL_PARAM *drbg_hash_gettable_ctx_params(ossl_unused void *vctx,
     static const OSSL_PARAM known_gettable_ctx_params[] = {
         OSSL_PARAM_utf8_string(OSSL_DRBG_PARAM_DIGEST, NULL, 0),
         OSSL_PARAM_DRBG_GETTABLE_CTX_COMMON,
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_gettable_ctx_params;
@@ -511,10 +508,6 @@ static int drbg_hash_set_ctx_params_locked(void *vctx, const OSSL_PARAM params[]
     OSSL_LIB_CTX *libctx = PROV_LIBCTX_OF(ctx->provctx);
     const EVP_MD *md;
     int md_size;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_DRBG_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
 
     if (!ossl_prov_digest_load_from_params(&hash->digest, params, libctx))
         return 0;
@@ -568,7 +561,6 @@ static const OSSL_PARAM *drbg_hash_settable_ctx_params(ossl_unused void *vctx,
         OSSL_PARAM_utf8_string(OSSL_DRBG_PARAM_PROPERTIES, NULL, 0),
         OSSL_PARAM_utf8_string(OSSL_DRBG_PARAM_DIGEST, NULL, 0),
         OSSL_PARAM_DRBG_SETTABLE_CTX_COMMON,
-        OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_DRBG_PARAM_FIPS_DIGEST_CHECK)
         OSSL_PARAM_END
     };
     return known_settable_ctx_params;

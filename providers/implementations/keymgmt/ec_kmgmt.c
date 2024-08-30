@@ -994,7 +994,6 @@ struct ec_gen_ctx {
     EC_GROUP *gen_group;
     unsigned char *dhkem_ikm;
     size_t dhkem_ikmlen;
-    OSSL_FIPS_IND_DECLARE
 };
 
 static void *ec_gen_init(void *provctx, int selection,
@@ -1010,7 +1009,6 @@ static void *ec_gen_init(void *provctx, int selection,
         gctx->libctx = libctx;
         gctx->selection = selection;
         gctx->ecdh_mode = 0;
-        OSSL_FIPS_IND_INIT(gctx)
         if (!ec_gen_set_params(gctx, params)) {
             OPENSSL_free(gctx);
             gctx = NULL;
@@ -1109,10 +1107,6 @@ static int ec_gen_set_params(void *genctx, const OSSL_PARAM params[])
     struct ec_gen_ctx *gctx = genctx;
     const OSSL_PARAM *p;
     EC_GROUP *group = NULL;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(gctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_PKEY_PARAM_FIPS_KEY_CHECK))
-        goto err;
 
     COPY_INT_PARAM(params, OSSL_PKEY_PARAM_USE_COFACTOR_ECDH, gctx->ecdh_mode);
 
@@ -1235,7 +1229,6 @@ static const OSSL_PARAM *ec_gen_settable_params(ossl_unused void *genctx,
         OSSL_PARAM_BN(OSSL_PKEY_PARAM_EC_COFACTOR, NULL, 0),
         OSSL_PARAM_octet_string(OSSL_PKEY_PARAM_EC_SEED, NULL, 0),
         OSSL_PARAM_octet_string(OSSL_PKEY_PARAM_DHKEM_IKM, NULL, 0),
-        OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_PKEY_PARAM_FIPS_KEY_CHECK)
         OSSL_PARAM_END
     };
     return settable;
@@ -1245,7 +1238,6 @@ static const OSSL_PARAM *ec_gen_gettable_params(ossl_unused void *genctx,
                                                 ossl_unused void *provctx)
 {
     static const OSSL_PARAM known_ec_gen_gettable_ctx_params[] = {
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_ec_gen_gettable_ctx_params;
@@ -1256,9 +1248,6 @@ static int ec_gen_get_params(void *genctx, OSSL_PARAM *params)
     struct ec_gen_ctx *gctx = genctx;
 
     if (gctx == NULL)
-        return 0;
-
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(gctx, params))
         return 0;
 
     return 1;

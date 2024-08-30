@@ -76,7 +76,6 @@ typedef struct {
     /* KDF output length */
     size_t kdf_outlen;
     char *kdf_cekalg;
-    OSSL_FIPS_IND_DECLARE
 } PROV_DH_CTX;
 
 static void *dh_newctx(void *provctx)
@@ -89,7 +88,6 @@ static void *dh_newctx(void *provctx)
     pdhctx = OPENSSL_zalloc(sizeof(PROV_DH_CTX));
     if (pdhctx == NULL)
         return NULL;
-    OSSL_FIPS_IND_INIT(pdhctx)
     pdhctx->libctx = PROV_LIBCTX_OF(provctx);
     pdhctx->kdf_type = PROV_DH_KDF_NONE;
     return pdhctx;
@@ -132,7 +130,6 @@ static int dh_init(void *vpdhctx, void *vdh, const OSSL_PARAM params[])
     pdhctx->dh = vdh;
     pdhctx->kdf_type = PROV_DH_KDF_NONE;
 
-    OSSL_FIPS_IND_SET_APPROVED(pdhctx)
     if (!dh_set_ctx_params(pdhctx, params))
         return 0;
 #ifdef FIPS_MODULE
@@ -350,13 +347,6 @@ static int dh_set_ctx_params(void *vpdhctx, const OSSL_PARAM params[])
     if (params == NULL)
         return 1;
 
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pdhctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK))
-        return  0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pdhctx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK))
-        return  0;
-
     p = OSSL_PARAM_locate_const(params, OSSL_EXCHANGE_PARAM_KDF_TYPE);
     if (p != NULL) {
         str = name;
@@ -463,8 +453,6 @@ static const OSSL_PARAM known_settable_ctx_params[] = {
     OSSL_PARAM_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN, NULL),
     OSSL_PARAM_octet_string(OSSL_EXCHANGE_PARAM_KDF_UKM, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_KDF_PARAM_CEK_ALG, NULL, 0),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK)
     OSSL_PARAM_END
 };
 
@@ -481,8 +469,6 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
     OSSL_PARAM_DEFN(OSSL_EXCHANGE_PARAM_KDF_UKM, OSSL_PARAM_OCTET_PTR,
                     NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_KDF_PARAM_CEK_ALG, NULL, 0),
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
-    OSSL_PARAM_END
 };
 
 static const OSSL_PARAM *dh_gettable_ctx_params(ossl_unused void *vpdhctx,
@@ -539,8 +525,6 @@ static int dh_get_ctx_params(void *vpdhctx, OSSL_PARAM params[])
     if (p != NULL
             && !OSSL_PARAM_set_utf8_string(p, pdhctx->kdf_cekalg == NULL
                                            ? "" :  pdhctx->kdf_cekalg))
-        return 0;
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(pdhctx, params))
         return 0;
     return 1;
 }

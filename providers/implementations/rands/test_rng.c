@@ -216,7 +216,6 @@ static const OSSL_PARAM *test_rng_gettable_ctx_params(ossl_unused void *vtest,
         OSSL_PARAM_uint(OSSL_RAND_PARAM_STRENGTH, NULL),
         OSSL_PARAM_size_t(OSSL_RAND_PARAM_MAX_REQUEST, NULL),
         OSSL_PARAM_uint(OSSL_RAND_PARAM_GENERATE, NULL),
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_gettable_ctx_params;

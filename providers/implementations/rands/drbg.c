@@ -934,8 +934,6 @@ int ossl_drbg_get_ctx_params(PROV_DRBG *drbg, OSSL_PARAM params[])
     p = OSSL_PARAM_locate(params, OSSL_DRBG_PARAM_RESEED_TIME_INTERVAL);
     if (p != NULL && !OSSL_PARAM_set_time_t(p, drbg->reseed_time_interval))
         return 0;
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(drbg, params))
-        return 0;
     return 1;
 }
 

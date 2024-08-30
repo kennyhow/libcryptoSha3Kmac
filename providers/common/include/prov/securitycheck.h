@@ -10,8 +10,6 @@
 #include "crypto/types.h"
 #include <openssl/ec.h>
 
-#include "fips/fipsindicator.h"
-
 /* Functions that are common */
 int ossl_rsa_key_op_get_protect(const RSA *rsa, int operation, int *outprotect);
 int ossl_rsa_check_key_size(const RSA *rsa, int protect);
@@ -33,7 +31,3 @@ int ossl_dh_check_key(const DH *dh);
 
 int ossl_digest_md_to_nid(const EVP_MD *md, const OSSL_ITEM *it, size_t it_len);
 int ossl_digest_get_approved_nid(const EVP_MD *md);
-
-/* Functions that have different implementations for the FIPS_MODULE */
-int ossl_digest_rsa_sign_get_md_nid(const EVP_MD *md);
-int ossl_fips_config_securitycheck_enabled(OSSL_LIB_CTX *libctx);

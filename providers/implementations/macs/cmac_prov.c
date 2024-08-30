@@ -50,7 +50,6 @@ struct cmac_data_st {
     void *provctx;
     CMAC_CTX *ctx;
     PROV_CIPHER cipher;
-    OSSL_FIPS_IND_DECLARE
 };
 
 static void *cmac_new(void *provctx)
@@ -66,7 +65,6 @@ static void *cmac_new(void *provctx)
         macctx = NULL;
     } else {
         macctx->provctx = provctx;
-        OSSL_FIPS_IND_INIT(macctx)
     }
 
     return macctx;
@@ -99,7 +97,6 @@ static void *cmac_dup(void *vsrc)
         cmac_free(dst);
         return NULL;
     }
-    OSSL_FIPS_IND_COPY(dst, src)
     return dst;
 }
 
@@ -202,7 +199,6 @@ static int cmac_final(void *vmacctx, unsigned char *out, size_t *outl,
 static const OSSL_PARAM known_gettable_ctx_params[] = {
     OSSL_PARAM_size_t(OSSL_MAC_PARAM_SIZE, NULL),
     OSSL_PARAM_size_t(OSSL_MAC_PARAM_BLOCK_SIZE, NULL),
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
     OSSL_PARAM_END
 };
 static const OSSL_PARAM *cmac_gettable_ctx_params(ossl_unused void *ctx,
@@ -223,8 +219,6 @@ static int cmac_get_ctx_params(void *vmacctx, OSSL_PARAM params[])
             && !OSSL_PARAM_set_size_t(p, cmac_size(vmacctx)))
         return 0;
 
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM((struct cmac_data_st *)vmacctx, params))
-        return 0;
     return 1;
 }
 
@@ -232,7 +226,6 @@ static const OSSL_PARAM known_settable_ctx_params[] = {
     OSSL_PARAM_utf8_string(OSSL_MAC_PARAM_CIPHER, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_MAC_PARAM_PROPERTIES, NULL, 0),
     OSSL_PARAM_octet_string(OSSL_MAC_PARAM_KEY, NULL, 0),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_CIPHER_PARAM_FIPS_ENCRYPT_CHECK)
     OSSL_PARAM_END
 };
 static const OSSL_PARAM *cmac_settable_ctx_params(ossl_unused void *ctx,
@@ -252,11 +245,6 @@ static int cmac_set_ctx_params(void *vmacctx, const OSSL_PARAM params[])
 
     if (params == NULL)
         return 1;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(macctx,
-                                     OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_CIPHER_PARAM_FIPS_ENCRYPT_CHECK))
-        return 0;
 
     if ((p = OSSL_PARAM_locate_const(params, OSSL_MAC_PARAM_CIPHER)) != NULL) {
         if (!ossl_prov_cipher_load_from_params(&macctx->cipher, params, ctx))

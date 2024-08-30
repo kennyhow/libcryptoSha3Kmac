@@ -56,7 +56,6 @@ typedef struct {
     uint64_t iter;
     PROV_DIGEST digest;
     int lower_bound_checks;
-    OSSL_FIPS_IND_DECLARE
 } KDF_PBKDF2;
 
 static int pbkdf2_derive(KDF_PBKDF2 *ctx, const char *pass, size_t passlen,
@@ -77,7 +76,6 @@ static void *kdf_pbkdf2_new_no_init(void *provctx)
     if (ctx == NULL)
         return NULL;
     ctx->provctx = provctx;
-    OSSL_FIPS_IND_INIT(ctx);
     return ctx;
 }
 
@@ -138,7 +136,6 @@ static void *kdf_pbkdf2_dup(void *vctx)
             goto err;
         dest->iter = src->iter;
         dest->lower_bound_checks = src->lower_bound_checks;
-        OSSL_FIPS_IND_COPY(dest, src)
     }
     return dest;
 
@@ -333,8 +330,6 @@ static int kdf_pbkdf2_get_ctx_params(void *vctx, OSSL_PARAM params[])
         if (!OSSL_PARAM_set_size_t(p, SIZE_MAX))
             return 0;
 
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM((KDF_PBKDF2 *) vctx, params))
-        return 0;
     return 1;
 }
 
@@ -343,7 +338,6 @@ static const OSSL_PARAM *kdf_pbkdf2_gettable_ctx_params(ossl_unused void *ctx,
 {
     static const OSSL_PARAM known_gettable_ctx_params[] = {
         OSSL_PARAM_size_t(OSSL_KDF_PARAM_SIZE, NULL),
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_gettable_ctx_params;

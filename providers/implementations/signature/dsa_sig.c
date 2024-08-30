@@ -88,7 +88,6 @@ typedef struct {
     EVP_MD *md;
     EVP_MD_CTX *mdctx;
     int operation;
-    OSSL_FIPS_IND_DECLARE
 } PROV_DSA_CTX;
 
 
@@ -118,7 +117,6 @@ static void *dsa_newctx(void *provctx, const char *propq)
 
     pdsactx->libctx = PROV_LIBCTX_OF(provctx);
     pdsactx->flag_allow_md = 1;
-    OSSL_FIPS_IND_INIT(pdsactx)
     if (propq != NULL && (pdsactx->propq = OPENSSL_strdup(propq)) == NULL) {
         OPENSSL_free(pdsactx);
         pdsactx = NULL;
@@ -267,7 +265,6 @@ static int dsa_signverify_init(void *vpdsactx, void *vdsa,
 
     pdsactx->operation = operation;
 
-    OSSL_FIPS_IND_SET_APPROVED(pdsactx)
     if (!dsa_set_ctx_params(pdsactx, params))
         return 0;
 #ifdef FIPS_MODULE
@@ -534,8 +531,6 @@ static int dsa_get_ctx_params(void *vpdsactx, OSSL_PARAM *params)
     p = OSSL_PARAM_locate(params, OSSL_SIGNATURE_PARAM_NONCE_TYPE);
     if (p != NULL && !OSSL_PARAM_set_uint(p, pdsactx->nonce_type))
         return 0;
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(pdsactx, params))
-        return 0;
 
     return 1;
 }
@@ -544,7 +539,6 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
     OSSL_PARAM_octet_string(OSSL_SIGNATURE_PARAM_ALGORITHM_ID, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_DIGEST, NULL, 0),
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_NONCE_TYPE, NULL),
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
     OSSL_PARAM_END
 };
 
@@ -563,16 +557,6 @@ static int dsa_set_ctx_params(void *vpdsactx, const OSSL_PARAM params[])
         return 0;
     if (params == NULL)
         return 1;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pdsactx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pdsactx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pdsactx, OSSL_FIPS_IND_SETTABLE2, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_SIGN_CHECK))
-        return 0;
 
     p = OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_DIGEST);
     if (p != NULL) {
@@ -601,9 +585,6 @@ static const OSSL_PARAM settable_ctx_params[] = {
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_DIGEST, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_PROPERTIES, NULL, 0),
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_NONCE_TYPE, NULL),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_SIGN_CHECK)
     OSSL_PARAM_END
 };
 

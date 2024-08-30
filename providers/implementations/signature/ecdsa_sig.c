@@ -113,7 +113,6 @@ typedef struct {
 #endif
     /* If this is set then the generated k is not random */
     unsigned int nonce_type;
-    OSSL_FIPS_IND_DECLARE
 } PROV_ECDSA_CTX;
 
 static void *ecdsa_newctx(void *provctx, const char *propq)
@@ -127,7 +126,6 @@ static void *ecdsa_newctx(void *provctx, const char *propq)
     if (ctx == NULL)
         return NULL;
 
-    OSSL_FIPS_IND_INIT(ctx)
     ctx->flag_allow_md = 1;
 #ifdef FIPS_MODULE
     ctx->verify_message = 1;
@@ -162,7 +160,6 @@ static int ecdsa_signverify_init(PROV_ECDSA_CTX *ctx, void *ec,
 
     ctx->operation = operation;
 
-    OSSL_FIPS_IND_SET_APPROVED(ctx)
     if (!ecdsa_set_ctx_params(ctx, params))
         return 0;
 #ifdef FIPS_MODULE
@@ -533,8 +530,6 @@ static int ecdsa_get_ctx_params(void *vctx, OSSL_PARAM *params)
         return 0;
 #endif
 
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(ctx, params))
-        return 0;
     return 1;
 }
 
@@ -546,7 +541,6 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
 #ifdef FIPS_MODULE
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_FIPS_VERIFY_MESSAGE, NULL),
 #endif
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
     OSSL_PARAM_END
 };
 
@@ -566,13 +560,6 @@ static int ecdsa_set_ctx_params(void *vctx, const OSSL_PARAM params[])
         return 0;
     if (params == NULL)
         return 1;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
 
 #if !defined(OPENSSL_NO_ACVP_TESTS)
     p = OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_KAT);
@@ -617,8 +604,6 @@ static const OSSL_PARAM settable_ctx_params[] = {
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_PROPERTIES, NULL, 0),
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_KAT, NULL),
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_NONCE_TYPE, NULL),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK)
     OSSL_PARAM_END
 };
 

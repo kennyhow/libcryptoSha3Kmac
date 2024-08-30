@@ -50,7 +50,6 @@ typedef struct {
     char type; /* X */
     unsigned char *session_id;
     size_t session_id_len;
-    OSSL_FIPS_IND_DECLARE
 } KDF_SSHKDF;
 
 static void *kdf_sshkdf_new(void *provctx)
@@ -62,7 +61,6 @@ static void *kdf_sshkdf_new(void *provctx)
 
     if ((ctx = OPENSSL_zalloc(sizeof(*ctx))) != NULL) {
         ctx->provctx = provctx;
-        OSSL_FIPS_IND_INIT(ctx)
     }
     return ctx;
 }
@@ -106,7 +104,6 @@ static void *kdf_sshkdf_dup(void *vctx)
                 || !ossl_prov_digest_copy(&dest->digest, &src->digest))
             goto err;
         dest->type = src->type;
-        OSSL_FIPS_IND_COPY(dest, src)
     }
     return dest;
 
@@ -215,13 +212,6 @@ static int kdf_sshkdf_set_ctx_params(void *vctx, const OSSL_PARAM params[])
     if (params == NULL)
         return 1;
 
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_KDF_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(ctx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_KDF_PARAM_FIPS_KEY_CHECK))
-        return 0;
-
     if (OSSL_PARAM_locate_const(params, OSSL_ALG_PARAM_DIGEST) != NULL) {
         const EVP_MD *md = NULL;
 
@@ -288,8 +278,6 @@ static const OSSL_PARAM *kdf_sshkdf_settable_ctx_params(ossl_unused void *ctx,
         OSSL_PARAM_octet_string(OSSL_KDF_PARAM_SSHKDF_XCGHASH, NULL, 0),
         OSSL_PARAM_octet_string(OSSL_KDF_PARAM_SSHKDF_SESSION_ID, NULL, 0),
         OSSL_PARAM_utf8_string(OSSL_KDF_PARAM_SSHKDF_TYPE, NULL, 0),
-        OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_KDF_PARAM_FIPS_DIGEST_CHECK)
-        OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_KDF_PARAM_FIPS_KEY_CHECK)
         OSSL_PARAM_END
     };
     return known_settable_ctx_params;
@@ -303,8 +291,6 @@ static int kdf_sshkdf_get_ctx_params(void *vctx, OSSL_PARAM params[])
         if (!OSSL_PARAM_set_size_t(p, SIZE_MAX))
             return 0;
     }
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(((KDF_SSHKDF *)vctx), params))
-        return 0;
     return 1;
 }
 
@@ -313,7 +299,6 @@ static const OSSL_PARAM *kdf_sshkdf_gettable_ctx_params(ossl_unused void *ctx,
 {
     static const OSSL_PARAM known_gettable_ctx_params[] = {
         OSSL_PARAM_size_t(OSSL_KDF_PARAM_SIZE, NULL),
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
         OSSL_PARAM_END
     };
     return known_gettable_ctx_params;

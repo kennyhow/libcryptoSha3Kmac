@@ -181,8 +181,6 @@ static const OSSL_PARAM *ecx_gettable_ctx_params(ossl_unused void *vctx,
                                                  ossl_unused void *provctx)
 {
     static const OSSL_PARAM known_gettable_ctx_params[] = {
-        OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
-        OSSL_PARAM_END
     };
     return known_gettable_ctx_params;
 }

@@ -173,7 +173,6 @@ struct prov_drbg_st {
     OSSL_INOUT_CALLBACK *get_nonce_fn;
     OSSL_CALLBACK *cleanup_nonce_fn;
 
-    OSSL_FIPS_IND_DECLARE
 };
 
 PROV_DRBG *ossl_rand_drbg_new

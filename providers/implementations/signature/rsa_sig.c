@@ -154,7 +154,6 @@ typedef struct {
     /* Temp buffer */
     unsigned char *tbuf;
 
-    OSSL_FIPS_IND_DECLARE
 } PROV_RSA_CTX;
 
 /* True if PSS parameters are restricted */
@@ -239,7 +238,6 @@ static void *rsa_newctx(void *provctx, const char *propq)
         return NULL;
     }
 
-    OSSL_FIPS_IND_INIT(prsactx)
     prsactx->libctx = PROV_LIBCTX_OF(provctx);
     prsactx->flag_allow_md = 1;
 #ifdef FIPS_MODULE
@@ -386,7 +384,7 @@ static int rsa_setup_md(PROV_RSA_CTX *ctx, const char *mdname,
                            "%s could not be fetched", mdname);
             goto err;
         }
-        md_nid = ossl_digest_rsa_sign_get_md_nid(md);
+        md_nid = 0;
         if (md_nid <= 0) {
             ERR_raise_data(ERR_LIB_PROV, PROV_R_DIGEST_NOT_ALLOWED,
                            "digest=%s", mdname);
@@ -476,7 +474,7 @@ static int rsa_setup_mgf1_md(PROV_RSA_CTX *ctx, const char *mdname,
         return 0;
     }
     /* The default for mgf1 is SHA1 - so allow SHA1 */
-    if ((mdnid = ossl_digest_rsa_sign_get_md_nid(md)) <= 0
+    if ((mdnid = 0) <= 0
         || !rsa_check_padding(ctx, NULL, mdname, mdnid)) {
         if (mdnid <= 0)
             ERR_raise_data(ERR_LIB_PROV, PROV_R_DIGEST_NOT_ALLOWED,
@@ -595,7 +593,6 @@ rsa_signverify_init(PROV_RSA_CTX *prsactx, void *vrsa,
         return 0;
     }
 
-    OSSL_FIPS_IND_SET_APPROVED(prsactx)
     if (!set_ctx_params(prsactx, params))
         return 0;
 #ifdef FIPS_MODULE
@@ -1486,8 +1483,6 @@ static int rsa_get_ctx_params(void *vprsactx, OSSL_PARAM *params)
         return 0;
 #endif
 
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(prsactx, params))
-        return 0;
     return 1;
 }
 
@@ -1500,7 +1495,6 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
 #ifdef FIPS_MODULE
     OSSL_PARAM_uint(OSSL_SIGNATURE_PARAM_FIPS_VERIFY_MESSAGE, NULL),
 #endif
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
     OSSL_PARAM_END
 };
 
@@ -1544,22 +1538,6 @@ static int rsa_set_ctx_params(void *vprsactx, const OSSL_PARAM params[])
         return 0;
     if (params == NULL)
         return 1;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(prsactx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK))
-        return 0;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(prsactx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(prsactx, OSSL_FIPS_IND_SETTABLE2, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_SIGN_X931_PAD_CHECK))
-        return 0;
-
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(prsactx, OSSL_FIPS_IND_SETTABLE3, params,
-                                     OSSL_SIGNATURE_PARAM_FIPS_RSA_PSS_SALTLEN_CHECK))
-        return 0;
 
     pad_mode = prsactx->pad_mode;
     saltlen = prsactx->saltlen;
@@ -1789,10 +1767,6 @@ static const OSSL_PARAM settable_ctx_params[] = {
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_MGF1_DIGEST, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_MGF1_PROPERTIES, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_PSS_SALTLEN, NULL, 0),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_RSA_PSS_SALTLEN_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_SIGN_X931_PAD_CHECK)
     OSSL_PARAM_END
 };
 
@@ -1801,10 +1775,6 @@ static const OSSL_PARAM settable_ctx_params_no_digest[] = {
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_MGF1_DIGEST, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_MGF1_PROPERTIES, NULL, 0),
     OSSL_PARAM_utf8_string(OSSL_SIGNATURE_PARAM_PSS_SALTLEN, NULL, 0),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_DIGEST_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_RSA_PSS_SALTLEN_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_SIGNATURE_PARAM_FIPS_SIGN_X931_PAD_CHECK)
     OSSL_PARAM_END
 };
 

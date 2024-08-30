@@ -77,7 +77,6 @@ typedef struct {
     size_t kdf_ukmlen;
     /* KDF output length */
     size_t kdf_outlen;
-    OSSL_FIPS_IND_DECLARE
 } PROV_ECDH_CTX;
 
 static
@@ -95,7 +94,6 @@ void *ecdh_newctx(void *provctx)
     pectx->libctx = PROV_LIBCTX_OF(provctx);
     pectx->cofactor_mode = -1;
     pectx->kdf_type = PROV_ECDH_KDF_NONE;
-    OSSL_FIPS_IND_INIT(pectx)
 
     return (void *)pectx;
 }
@@ -116,7 +114,6 @@ int ecdh_init(void *vpecdhctx, void *vecdh, const OSSL_PARAM params[])
     pecdhctx->cofactor_mode = -1;
     pecdhctx->kdf_type = PROV_ECDH_KDF_NONE;
 
-    OSSL_FIPS_IND_SET_APPROVED(pecdhctx)
     if (!ecdh_set_ctx_params(pecdhctx, params))
         return 0;
 #ifdef FIPS_MODULE
@@ -256,16 +253,6 @@ int ecdh_set_ctx_params(void *vpecdhctx, const OSSL_PARAM params[])
     if (params == NULL)
         return 1;
 
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pectx, OSSL_FIPS_IND_SETTABLE0, params,
-                                     OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pectx, OSSL_FIPS_IND_SETTABLE1, params,
-                                     OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK))
-        return 0;
-    if (!OSSL_FIPS_IND_SET_CTX_PARAM(pectx, OSSL_FIPS_IND_SETTABLE2, params,
-                                     OSSL_EXCHANGE_PARAM_FIPS_ECDH_COFACTOR_CHECK))
-        return 0;
-
     p = OSSL_PARAM_locate_const(params, OSSL_EXCHANGE_PARAM_EC_ECDH_COFACTOR_MODE);
     if (p != NULL) {
         int mode;
@@ -361,9 +348,6 @@ static const OSSL_PARAM known_settable_ctx_params[] = {
     OSSL_PARAM_utf8_string(OSSL_EXCHANGE_PARAM_KDF_DIGEST_PROPS, NULL, 0),
     OSSL_PARAM_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN, NULL),
     OSSL_PARAM_octet_string(OSSL_EXCHANGE_PARAM_KDF_UKM, NULL, 0),
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_EXCHANGE_PARAM_FIPS_KEY_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_EXCHANGE_PARAM_FIPS_DIGEST_CHECK)
-    OSSL_FIPS_IND_SETTABLE_CTX_PARAM(OSSL_EXCHANGE_PARAM_FIPS_ECDH_COFACTOR_CHECK)
     OSSL_PARAM_END
 };
 
@@ -431,8 +415,6 @@ int ecdh_get_ctx_params(void *vpecdhctx, OSSL_PARAM params[])
     if (p != NULL &&
         !OSSL_PARAM_set_octet_ptr(p, pectx->kdf_ukm, pectx->kdf_ukmlen))
         return 0;
-    if (!OSSL_FIPS_IND_GET_CTX_PARAM(pectx, params))
-        return 0;
     return 1;
 }
 
@@ -443,8 +425,6 @@ static const OSSL_PARAM known_gettable_ctx_params[] = {
     OSSL_PARAM_size_t(OSSL_EXCHANGE_PARAM_KDF_OUTLEN, NULL),
     OSSL_PARAM_DEFN(OSSL_EXCHANGE_PARAM_KDF_UKM, OSSL_PARAM_OCTET_PTR,
                     NULL, 0),
-    OSSL_FIPS_IND_GETTABLE_CTX_PARAM()
-    OSSL_PARAM_END
 };
 
 static
