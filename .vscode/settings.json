@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.sage": "python",
+        "evp.h": "c",
+        "stdio.h": "c",
+        "params.h": "c",
+        "core_names.h": "c"
+    }
+}
