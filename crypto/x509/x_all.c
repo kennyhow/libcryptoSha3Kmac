@@ -1,3 +1,4 @@
+// WARN: DO NOT USe
 /*
  * Copyright 1995-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -115,19 +116,7 @@ int X509_sign_ctx(X509 *x, EVP_MD_CTX *ctx)
 static ASN1_VALUE *simple_get_asn1(const char *url, BIO *bio, BIO *rbio,
                                    int timeout, const ASN1_ITEM *it)
 {
-#ifndef OPENSSL_NO_HTTP
-    BIO *mem = OSSL_HTTP_get(url, NULL /* proxy */, NULL /* no_proxy */,
-                             bio, rbio, NULL /* cb */, NULL /* arg */,
-                             1024 /* buf_size */, NULL /* headers */,
-                             NULL /* expected_ct */, 1 /* expect_asn1 */,
-                             OSSL_HTTP_DEFAULT_MAX_RESP_LEN, timeout);
-    ASN1_VALUE *res = ASN1_item_d2i_bio(it, mem, NULL);
-
-    BIO_free(mem);
-    return res;
-#else
-    return 0;
-#endif
+return 0;
 }
 
 X509 *X509_load_http(const char *url, BIO *bio, BIO *rbio, int timeout)

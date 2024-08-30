@@ -38,7 +38,6 @@
 #include "crypto/tserr.h"
 #include "crypto/cmserr.h"
 #include "crypto/crmferr.h"
-#include "crypto/cmperr.h"
 #include "crypto/cterr.h"
 #include "crypto/asyncerr.h"
 #include "crypto/storeerr.h"
@@ -87,7 +86,7 @@ int ossl_err_load_crypto_strings(void)
         || ossl_err_load_ENGINE_strings() == 0
 # endif
 # ifndef OPENSSL_NO_HTTP
-        || ossl_err_load_HTTP_strings() == 0
+        //|| ossl_err_load_HTTP_strings() == 0
 # endif
 # ifndef OPENSSL_NO_OCSP
         || ossl_err_load_OCSP_strings() == 0

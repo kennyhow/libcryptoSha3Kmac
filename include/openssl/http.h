@@ -79,12 +79,6 @@ int OSSL_HTTP_set1_request(OSSL_HTTP_REQ_CTX *rctx, const char *path,
                            const char *expected_content_type, int expect_asn1,
                            size_t max_resp_len, int timeout, int keep_alive);
 BIO *OSSL_HTTP_exchange(OSSL_HTTP_REQ_CTX *rctx, char **redirection_url);
-BIO *OSSL_HTTP_get(const char *url, const char *proxy, const char *no_proxy,
-                   BIO *bio, BIO *rbio,
-                   OSSL_HTTP_bio_cb_t bio_update_fn, void *arg,
-                   int buf_size, const STACK_OF(CONF_VALUE) *headers,
-                   const char *expected_content_type, int expect_asn1,
-                   size_t max_resp_len, int timeout);
 BIO *OSSL_HTTP_transfer(OSSL_HTTP_REQ_CTX **prctx,
                         const char *server, const char *port,
                         const char *path, int use_ssl,

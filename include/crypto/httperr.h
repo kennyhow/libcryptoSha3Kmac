@@ -19,11 +19,6 @@
 extern "C" {
 # endif
 
-# ifndef OPENSSL_NO_HTTP
-
-int ossl_err_load_HTTP_strings(void);
-# endif
-
 # ifdef  __cplusplus
 }
 # endif
