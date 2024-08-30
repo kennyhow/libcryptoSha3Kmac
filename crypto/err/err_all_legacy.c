@@ -14,7 +14,6 @@
 
 # include "crypto/err.h"
 # include "crypto/asn1err.h"
-# include "crypto/asyncerr.h"
 # include "crypto/bnerr.h"
 # include "crypto/buffererr.h"
 # include "crypto/bioerr.h"
@@ -58,7 +57,6 @@
 # endif
 
 IMPLEMENT_LEGACY_ERR_LOAD(ASN1)
-IMPLEMENT_LEGACY_ERR_LOAD(ASYNC)
 IMPLEMENT_LEGACY_ERR_LOAD(BIO)
 IMPLEMENT_LEGACY_ERR_LOAD(BN)
 IMPLEMENT_LEGACY_ERR_LOAD(BUF)
