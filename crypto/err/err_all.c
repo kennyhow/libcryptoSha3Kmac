@@ -1,3 +1,4 @@
+// WARN: DO NOT USE
 /*
  * Copyright 1995-2023 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -97,7 +98,7 @@ int ossl_err_load_crypto_strings(void)
 # endif
 # ifndef OPENSSL_NO_CRMF
         || ossl_err_load_CRMF_strings() == 0
-        || ossl_err_load_CMP_strings() == 0
+        //|| ossl_err_load_CMP_strings() == 0
 # endif
 # ifndef OPENSSL_NO_CT
         || ossl_err_load_CT_strings() == 0

@@ -1,3 +1,4 @@
+// WARN: DO NOT USE (removed openssl_cleanup function)
 /*
  * Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.
  *
@@ -458,7 +459,6 @@ void OPENSSL_cleanup(void)
 
 #ifndef OPENSSL_NO_CMP
     OSSL_TRACE(INIT, "OPENSSL_cleanup: OSSL_CMP_log_close()\n");
-    OSSL_CMP_log_close();
 #endif
 
     OSSL_TRACE(INIT, "OPENSSL_cleanup: ossl_trace_cleanup()\n");
