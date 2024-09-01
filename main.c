@@ -145,6 +145,9 @@ int main1(void) {
 int main2(void) {
     const unsigned char message[] = "hello, world";
     print_sha3_hash(message, strlen((const char *)message));
+
+    const unsigned char message2[] = "goodbye world!";
+    print_sha3_hash(message2, strlen((const char *)message2));
     return 0;
 }
 
@@ -161,6 +164,6 @@ make build_generated && make libcrypto.a
 
 gcc ./main.c ./libcrypto.a -Wl,--unresolved-symbols=ignore-all && ./a.out
 OR
-gcc ./main.c ./libcrypto.a -I/home/rabbitsthecat/openssl/include -I/home/rabbitsthecat/openssl && ./a.out
+gcc ./main.c ./libcrypto.a -I/home/rabbitsthecat/openssl/include && ./a.out
 */
 
