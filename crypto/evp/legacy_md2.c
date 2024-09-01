@@ -13,7 +13,6 @@
  */
 #include "internal/deprecated.h"
 
-#include <openssl/md2.h>
 #include "crypto/evp.h"
 #include "legacy_meth.h"
 
