@@ -10,7 +10,6 @@
 #ifndef OSSL_CRYPTO_RAND_LOCAL_H
 # define OSSL_CRYPTO_RAND_LOCAL_H
 
-# include <openssl/aes.h>
 # include <openssl/evp.h>
 # include <openssl/sha.h>
 # include <openssl/hmac.h>

@@ -12,7 +12,6 @@
 # define OSSL_PROV_CIPHERCOMMON_GCM_H
 # pragma once
 
-# include <openssl/aes.h>
 # include "ciphercommon_aead.h"
 
 typedef struct prov_gcm_hw_st PROV_GCM_HW;
@@ -73,7 +72,7 @@ typedef struct prov_gcm_ctx_st {
     unsigned int iv_gen:1;      /* It is OK to generate IVs */
 
     unsigned char iv[GCM_IV_MAX_SIZE]; /* Buffer to use for IV's */
-    unsigned char buf[AES_BLOCK_SIZE]; /* Buffer of partial blocks processed via update calls */
+    unsigned char buf[16]; /* Buffer of partial blocks processed via update calls */
 
     OSSL_LIB_CTX *libctx;    /* needed for rand calls */
     const PROV_GCM_HW *hw;  /* hardware specific methods */

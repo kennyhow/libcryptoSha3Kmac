@@ -122,7 +122,6 @@ my $CHECK_FUNCTION_ARGUMENTS = 0;
 # ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 # AES block size in bytes
-my $AES_BLOCK_SIZE = 16;
 
 # Storage capacity in elements
 my $HKEYS_STORAGE_CAPACITY = 48;
@@ -144,8 +143,8 @@ my $HKEYS_CONTEXT_CAPACITY = 16;
 
 my $GP_STORAGE  = $win64 ? 8 * 8     : 8 * 6;    # ; space for saved non-volatile GP registers (pushed on stack)
 my $XMM_STORAGE = $win64 ? (10 * 16) : 0;        # ; space for saved XMM registers
-my $HKEYS_STORAGE = ($HKEYS_STORAGE_CAPACITY * $AES_BLOCK_SIZE);    # ; space for HKeys^i, i=1..48
-my $LOCAL_STORAGE = ($LOCAL_STORAGE_CAPACITY * $AES_BLOCK_SIZE);    # ; space for up to 48 AES blocks
+my $HKEYS_STORAGE = ($HKEYS_STORAGE_CAPACITY * $16);    # ; space for HKeys^i, i=1..48
+my $LOCAL_STORAGE = ($LOCAL_STORAGE_CAPACITY * $16);    # ; space for up to 48 AES blocks
 
 my $STACK_HKEYS_OFFSET = 0;
 my $STACK_LOCAL_OFFSET = ($STACK_HKEYS_OFFSET + $HKEYS_STORAGE);
@@ -304,11 +303,11 @@ sub HashKeyOffsetByIdx {
   if ($base eq "frame") {    # frame storage
     die "HashKeyOffsetByIdx: idx out of bounds (1..48)! idx = $idx\n" if ($idx > $HKEYS_STORAGE_CAPACITY || $idx < 1);
     $offset_base = $STACK_HKEYS_OFFSET;
-    $offset_idx  = ($AES_BLOCK_SIZE * ($HKEYS_STORAGE_CAPACITY - $idx));
+    $offset_idx  = ($16 * ($HKEYS_STORAGE_CAPACITY - $idx));
   } else {                   # context storage
     die "HashKeyOffsetByIdx: idx out of bounds (1..16)! idx = $idx\n" if ($idx > $HKEYS_CONTEXT_CAPACITY || $idx < 1);
     $offset_base = $CTX_OFFSET_HTable;
-    $offset_idx  = ($AES_BLOCK_SIZE * ($HKEYS_CONTEXT_CAPACITY - $idx));
+    $offset_idx  = ($16 * ($HKEYS_CONTEXT_CAPACITY - $idx));
   }
   return $offset_base + $offset_idx;
 }

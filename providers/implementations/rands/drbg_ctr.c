@@ -12,7 +12,6 @@
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
-#include <openssl/aes.h>
 #include <openssl/proverr.h>
 #include "crypto/modes.h"
 #include "internal/thread_once.h"
@@ -102,7 +101,7 @@ static void ctr_XOR(PROV_DRBG_CTR *ctr, const unsigned char *in, size_t inlen)
 __owur static int ctr_BCC_block(PROV_DRBG_CTR *ctr, unsigned char *out,
                                 const unsigned char *in, int len)
 {
-    int i, outlen = AES_BLOCK_SIZE;
+    int i, outlen = 16;
 
     for (i = 0; i < len; i++)
         out[i] ^= in[i];
@@ -128,7 +127,7 @@ __owur static int ctr_BCC_blocks(PROV_DRBG_CTR *ctr, const unsigned char *in)
         memcpy(in_tmp + 32, in, 16);
         num_of_blk = 3;
     }
-    return ctr_BCC_block(ctr, ctr->KX, in_tmp, AES_BLOCK_SIZE * num_of_blk);
+    return ctr_BCC_block(ctr, ctr->KX, in_tmp, 16 * num_of_blk);
 }
 
 /*
@@ -142,9 +141,9 @@ __owur static int ctr_BCC_init(PROV_DRBG_CTR *ctr)
 
     memset(ctr->KX, 0, 48);
     num_of_blk = ctr->keylen == 16 ? 2 : 3;
-    bltmp[(AES_BLOCK_SIZE * 1) + 3] = 1;
-    bltmp[(AES_BLOCK_SIZE * 2) + 3] = 2;
-    return ctr_BCC_block(ctr, ctr->KX, bltmp, num_of_blk * AES_BLOCK_SIZE);
+    bltmp[(16 * 1) + 3] = 1;
+    bltmp[(16 * 2) + 3] = 2;
+    return ctr_BCC_block(ctr, ctr->KX, bltmp, num_of_blk * 16);
 }
 
 /*
@@ -203,7 +202,7 @@ __owur static int ctr_df(PROV_DRBG_CTR *ctr,
     static unsigned char c80 = 0x80;
     size_t inlen;
     unsigned char *p = ctr->bltmp;
-    int outlen = AES_BLOCK_SIZE;
+    int outlen = 16;
 
     if (!ctr_BCC_init(ctr))
         return 0;
@@ -237,17 +236,17 @@ __owur static int ctr_df(PROV_DRBG_CTR *ctr,
         return 0;
     /* X follows key K */
     if (!EVP_CipherUpdate(ctr->ctx_ecb, ctr->KX, &outlen, ctr->KX + ctr->keylen,
-                          AES_BLOCK_SIZE)
-        || outlen != AES_BLOCK_SIZE)
+                          16)
+        || outlen != 16)
         return 0;
     if (!EVP_CipherUpdate(ctr->ctx_ecb, ctr->KX + 16, &outlen, ctr->KX,
-                          AES_BLOCK_SIZE)
-        || outlen != AES_BLOCK_SIZE)
+                          16)
+        || outlen != 16)
         return 0;
     if (ctr->keylen != 16)
         if (!EVP_CipherUpdate(ctr->ctx_ecb, ctr->KX + 32, &outlen,
-                              ctr->KX + 16, AES_BLOCK_SIZE)
-            || outlen != AES_BLOCK_SIZE)
+                              ctr->KX + 16, 16)
+            || outlen != 16)
             return 0;
     return 1;
 }
@@ -264,7 +263,7 @@ __owur static int ctr_update(PROV_DRBG *drbg,
                              const unsigned char *nonce, size_t noncelen)
 {
     PROV_DRBG_CTR *ctr = (PROV_DRBG_CTR *)drbg->data;
-    int outlen = AES_BLOCK_SIZE;
+    int outlen = 16;
     unsigned char V_tmp[48], out[48];
     unsigned char len;
 

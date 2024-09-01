@@ -2033,7 +2033,7 @@ if ($builder eq "unified") {
         my $joined = join('-', @curd);
         print "$joined\n";
 
-        if (@curd && grep { $_ eq $joined} qw(doc apps demos VMS fuzz test ssl-record tools ssl-rio ssl crypto-cmp crypto-http crypto-async providers-implementations-asymciphers crypto-whrlpool crypto-cms crypto-ffc crypto-md2)) {
+        if (@curd && grep { $_ eq $joined} qw(doc apps demos VMS fuzz test ssl-record tools ssl-rio ssl crypto-cmp crypto-http crypto-async providers-implementations-asymciphers crypto-whrlpool crypto-cms crypto-ffc crypto-md2 crypto-aes)) {
             next;
         }
 
