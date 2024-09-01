@@ -30,7 +30,6 @@
 #include "crypto/evp.h"
 #include "crypto/dh.h"
 #include "crypto/ec.h"
-#include "internal/ffc.h"
 #include "internal/numbers.h"
 #include "internal/provider.h"
 #include "evp_local.h"

@@ -32,7 +32,7 @@ static OSSL_FUNC_decoder_set_ctx_params_fn spki2typespki_set_ctx_params;
  */
 struct spki2typespki_ctx_st {
     PROV_CTX *provctx;
-    char propq[OSSL_MAX_PROPQUERY_SIZE];
+    char propq[256];
 };
 
 static void *spki2typespki_newctx(void *provctx)
@@ -85,7 +85,7 @@ static int spki2typespki_decode(void *vctx, OSSL_CORE_BIO *cin, int selection,
     X509_PUBKEY *xpub = NULL;
     X509_ALGOR *algor = NULL;
     const ASN1_OBJECT *oid = NULL;
-    char dataname[OSSL_MAX_NAME_SIZE];
+    char dataname[1000];
     OSSL_PARAM params[5], *p = params;
 
     if (!ossl_read_der(ctx->provctx, cin, &der, &len))

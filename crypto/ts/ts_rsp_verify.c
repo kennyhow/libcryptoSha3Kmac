@@ -424,7 +424,7 @@ static int ts_compute_imprint(BIO *data, TS_TST_INFO *tst_info,
     EVP_MD *md = NULL;
     EVP_MD_CTX *md_ctx = NULL;
     unsigned char buffer[4096];
-    char name[OSSL_MAX_NAME_SIZE];
+    char name[1000];
     int length;
 
     *md_alg = NULL;

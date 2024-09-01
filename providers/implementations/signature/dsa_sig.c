@@ -77,7 +77,7 @@ typedef struct {
     /* If this is set to 1 then the generated k is not random */
     unsigned int nonce_type;
 
-    char mdname[OSSL_MAX_NAME_SIZE];
+    char mdname[1000];
 
     /* The Algorithm Identifier of the combined signature algorithm */
     unsigned char aid_buf[OSSL_MAX_ALGORITHM_ID_SIZE];
@@ -560,8 +560,8 @@ static int dsa_set_ctx_params(void *vpdsactx, const OSSL_PARAM params[])
 
     p = OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_DIGEST);
     if (p != NULL) {
-        char mdname[OSSL_MAX_NAME_SIZE] = "", *pmdname = mdname;
-        char mdprops[OSSL_MAX_PROPQUERY_SIZE] = "", *pmdprops = mdprops;
+        char mdname[1000] = "", *pmdname = mdname;
+        char mdprops[256] = "", *pmdprops = mdprops;
         const OSSL_PARAM *propsp =
             OSSL_PARAM_locate_const(params,
                                     OSSL_SIGNATURE_PARAM_PROPERTIES);

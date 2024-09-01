@@ -73,7 +73,7 @@ typedef struct {
      */
     unsigned int flag_compute_z_digest : 1;
 
-    char mdname[OSSL_MAX_NAME_SIZE];
+    char mdname[1000];
 
     /* The Algorithm Identifier of the combined signature algorithm */
     unsigned char aid_buf[OSSL_MAX_ALGORITHM_ID_SIZE];

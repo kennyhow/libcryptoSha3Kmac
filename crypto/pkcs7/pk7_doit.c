@@ -59,7 +59,7 @@ static int pkcs7_bio_add_digest(BIO **pbio, X509_ALGOR *alg,
                                 const PKCS7_CTX *ctx)
 {
     BIO *btmp;
-    char name[OSSL_MAX_NAME_SIZE];
+    char name[1000];
     EVP_MD *fetched = NULL;
     const EVP_MD *md;
 
@@ -399,7 +399,7 @@ BIO *PKCS7_dataDecode(PKCS7 *p7, EVP_PKEY *pkey, BIO *in_bio, X509 *pcert)
     PKCS7_RECIP_INFO *ri = NULL;
     unsigned char *ek = NULL, *tkey = NULL;
     int eklen = 0, tkeylen = 0;
-    char name[OSSL_MAX_NAME_SIZE];
+    char name[1000];
     const PKCS7_CTX *p7_ctx;
     OSSL_LIB_CTX *libctx;
     const char *propq;

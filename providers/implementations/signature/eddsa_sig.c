@@ -524,7 +524,7 @@ static int eddsa_set_ctx_params(void *vpeddsactx, const OSSL_PARAM params[])
 
     p = OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_INSTANCE);
     if (p != NULL) {
-        char instance_name[OSSL_MAX_NAME_SIZE] = "";
+        char instance_name[1000] = "";
         char *pinstance_name = instance_name;
 
         if (!OSSL_PARAM_get_utf8_string(p, &pinstance_name, sizeof(instance_name)))

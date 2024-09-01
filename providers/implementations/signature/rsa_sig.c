@@ -125,14 +125,14 @@ typedef struct {
     EVP_MD *md;
     EVP_MD_CTX *mdctx;
     int mdnid;
-    char mdname[OSSL_MAX_NAME_SIZE]; /* Purely informational */
+    char mdname[1000]; /* Purely informational */
 
     /* RSA padding mode */
     int pad_mode;
     /* message digest for MGF1 */
     EVP_MD *mgf1_md;
     int mgf1_mdnid;
-    char mgf1_mdname[OSSL_MAX_NAME_SIZE]; /* Purely informational */
+    char mgf1_mdname[1000]; /* Purely informational */
     /* PSS salt length */
     int saltlen;
     /* Minimum salt length or -1 if no PSS parameter restriction */
@@ -1529,10 +1529,10 @@ static int rsa_set_ctx_params(void *vprsactx, const OSSL_PARAM params[])
     const OSSL_PARAM *p;
     int pad_mode;
     int saltlen;
-    char mdname[OSSL_MAX_NAME_SIZE] = "", *pmdname = NULL;
-    char mdprops[OSSL_MAX_PROPQUERY_SIZE] = "", *pmdprops = NULL;
-    char mgf1mdname[OSSL_MAX_NAME_SIZE] = "", *pmgf1mdname = NULL;
-    char mgf1mdprops[OSSL_MAX_PROPQUERY_SIZE] = "", *pmgf1mdprops = NULL;
+    char mdname[1000] = "", *pmdname = NULL;
+    char mdprops[256] = "", *pmdprops = NULL;
+    char mgf1mdname[1000] = "", *pmgf1mdname = NULL;
+    char mgf1mdprops[256] = "", *pmgf1mdprops = NULL;
 
     if (prsactx == NULL)
         return 0;

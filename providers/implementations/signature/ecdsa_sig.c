@@ -65,7 +65,7 @@ typedef struct {
     OSSL_LIB_CTX *libctx;
     char *propq;
     EC_KEY *ec;
-    char mdname[OSSL_MAX_NAME_SIZE];
+    char mdname[1000];
 
     /*
      * Flag to determine if the hash function can be changed (1) or not (0)
@@ -569,8 +569,8 @@ static int ecdsa_set_ctx_params(void *vctx, const OSSL_PARAM params[])
 
     p = OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_DIGEST);
     if (p != NULL) {
-        char mdname[OSSL_MAX_NAME_SIZE] = "", *pmdname = mdname;
-        char mdprops[OSSL_MAX_PROPQUERY_SIZE] = "", *pmdprops = mdprops;
+        char mdname[1000] = "", *pmdname = mdname;
+        char mdprops[256] = "", *pmdprops = mdprops;
         const OSSL_PARAM *propsp =
             OSSL_PARAM_locate_const(params,
                                     OSSL_SIGNATURE_PARAM_PROPERTIES);

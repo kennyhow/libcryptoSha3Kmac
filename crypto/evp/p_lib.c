@@ -36,7 +36,6 @@
 #include <openssl/core_names.h>
 
 #include "internal/numbers.h"   /* includes SIZE_MAX */
-#include "internal/ffc.h"
 #include "crypto/evp.h"
 #include "crypto/dh.h"
 #include "crypto/dsa.h"

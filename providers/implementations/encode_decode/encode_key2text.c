@@ -21,7 +21,6 @@
 #include <openssl/err.h>
 #include <openssl/safestack.h>
 #include <openssl/proverr.h>
-#include "internal/ffc.h"
 #include "crypto/bn.h"           /* bn_get_words() */
 #include "crypto/dh.h"           /* ossl_dh_get0_params() */
 #include "crypto/dsa.h"          /* ossl_dsa_get0_params() */
@@ -158,56 +157,6 @@ static int print_labeled_buf(BIO *out, const char *label,
 #endif
 
 #if !defined(OPENSSL_NO_DH) || !defined(OPENSSL_NO_DSA)
-static int ffc_params_to_text(BIO *out, const FFC_PARAMS *ffc)
-{
-    if (ffc->nid != NID_undef) {
-#ifndef OPENSSL_NO_DH
-        const DH_NAMED_GROUP *group = ossl_ffc_uid_to_dh_named_group(ffc->nid);
-        const char *name = ossl_ffc_named_group_get_name(group);
-
-        if (name == NULL)
-            goto err;
-        if (BIO_printf(out, "GROUP: %s\n", name) <= 0)
-            goto err;
-        return 1;
-#else
-        /* How could this be? We should not have a nid in a no-dh build. */
-        goto err;
-#endif
-    }
-
-    if (!print_labeled_bignum(out, "P:   ", ffc->p))
-        goto err;
-    if (ffc->q != NULL) {
-        if (!print_labeled_bignum(out, "Q:   ", ffc->q))
-            goto err;
-    }
-    if (!print_labeled_bignum(out, "G:   ", ffc->g))
-        goto err;
-    if (ffc->j != NULL) {
-        if (!print_labeled_bignum(out, "J:   ", ffc->j))
-            goto err;
-    }
-    if (ffc->seed != NULL) {
-        if (!print_labeled_buf(out, "SEED:", ffc->seed, ffc->seedlen))
-            goto err;
-    }
-    if (ffc->gindex != -1) {
-        if (BIO_printf(out, "gindex: %d\n", ffc->gindex) <= 0)
-            goto err;
-    }
-    if (ffc->pcounter != -1) {
-        if (BIO_printf(out, "pcounter: %d\n", ffc->pcounter) <= 0)
-            goto err;
-    }
-    if (ffc->h != 0) {
-        if (BIO_printf(out, "h: %d\n", ffc->h) <= 0)
-            goto err;
-    }
-    return 1;
-err:
-    return 0;
-}
 #endif
 
 /* ---------------------------------------------------------------------- */
@@ -215,71 +164,7 @@ err:
 #ifndef OPENSSL_NO_DH
 static int dh_to_text(BIO *out, const void *key, int selection)
 {
-    const DH *dh = key;
-    const char *type_label = NULL;
-    const BIGNUM *priv_key = NULL, *pub_key = NULL;
-    const FFC_PARAMS *params = NULL;
-    const BIGNUM *p = NULL;
-    long length;
-
-    if (out == NULL || dh == NULL) {
-        ERR_raise(ERR_LIB_PROV, ERR_R_PASSED_NULL_PARAMETER);
-        return 0;
-    }
-
-    if ((selection & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) != 0)
-        type_label = "DH Private-Key";
-    else if ((selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) != 0)
-        type_label = "DH Public-Key";
-    else if ((selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0)
-        type_label = "DH Parameters";
-
-    if ((selection & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) != 0) {
-        priv_key = DH_get0_priv_key(dh);
-        if (priv_key == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_A_PRIVATE_KEY);
-            return 0;
-        }
-    }
-    if ((selection & OSSL_KEYMGMT_SELECT_KEYPAIR) != 0) {
-        pub_key = DH_get0_pub_key(dh);
-        if (pub_key == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_A_PUBLIC_KEY);
-            return 0;
-        }
-    }
-    if ((selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0) {
-        params = ossl_dh_get0_params((DH *)dh);
-        if (params == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_PARAMETERS);
-            return 0;
-        }
-    }
-
-    p = DH_get0_p(dh);
-    if (p == NULL) {
-        ERR_raise(ERR_LIB_PROV, PROV_R_INVALID_KEY);
-        return 0;
-    }
-
-    if (BIO_printf(out, "%s: (%d bit)\n", type_label, BN_num_bits(p)) <= 0)
-        return 0;
-    if (priv_key != NULL
-        && !print_labeled_bignum(out, "private-key:", priv_key))
-        return 0;
-    if (pub_key != NULL
-        && !print_labeled_bignum(out, "public-key:", pub_key))
-        return 0;
-    if (params != NULL
-        && !ffc_params_to_text(out, params))
-        return 0;
-    length = DH_get_length(dh);
-    if (length > 0
-        && BIO_printf(out, "recommended-private-length: %ld bits\n",
-                      length) <= 0)
-        return 0;
-
-    return 1;
+    return 0;
 }
 
 # define dh_input_type          "DH"
@@ -291,65 +176,7 @@ static int dh_to_text(BIO *out, const void *key, int selection)
 #ifndef OPENSSL_NO_DSA
 static int dsa_to_text(BIO *out, const void *key, int selection)
 {
-    const DSA *dsa = key;
-    const char *type_label = NULL;
-    const BIGNUM *priv_key = NULL, *pub_key = NULL;
-    const FFC_PARAMS *params = NULL;
-    const BIGNUM *p = NULL;
-
-    if (out == NULL || dsa == NULL) {
-        ERR_raise(ERR_LIB_PROV, ERR_R_PASSED_NULL_PARAMETER);
-        return 0;
-    }
-
-    if ((selection & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) != 0)
-        type_label = "Private-Key";
-    else if ((selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) != 0)
-        type_label = "Public-Key";
-    else if ((selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0)
-        type_label = "DSA-Parameters";
-
-    if ((selection & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) != 0) {
-        priv_key = DSA_get0_priv_key(dsa);
-        if (priv_key == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_A_PRIVATE_KEY);
-            return 0;
-        }
-    }
-    if ((selection & OSSL_KEYMGMT_SELECT_KEYPAIR) != 0) {
-        pub_key = DSA_get0_pub_key(dsa);
-        if (pub_key == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_A_PUBLIC_KEY);
-            return 0;
-        }
-    }
-    if ((selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0) {
-        params = ossl_dsa_get0_params((DSA *)dsa);
-        if (params == NULL) {
-            ERR_raise(ERR_LIB_PROV, PROV_R_NOT_PARAMETERS);
-            return 0;
-        }
-    }
-
-    p = DSA_get0_p(dsa);
-    if (p == NULL) {
-        ERR_raise(ERR_LIB_PROV, PROV_R_INVALID_KEY);
-        return 0;
-    }
-
-    if (BIO_printf(out, "%s: (%d bit)\n", type_label, BN_num_bits(p)) <= 0)
-        return 0;
-    if (priv_key != NULL
-        && !print_labeled_bignum(out, "priv:", priv_key))
-        return 0;
-    if (pub_key != NULL
-        && !print_labeled_bignum(out, "pub: ", pub_key))
-        return 0;
-    if (params != NULL
-        && !ffc_params_to_text(out, params))
-        return 0;
-
-    return 1;
+    return 0;
 }
 
 # define dsa_input_type         "DSA"

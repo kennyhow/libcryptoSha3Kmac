@@ -58,7 +58,7 @@ static OSSL_FUNC_decoder_set_ctx_params_fn pvk2key_set_ctx_params;
  */
 struct pvk2key_ctx_st {
     PROV_CTX *provctx;
-    char propq[OSSL_MAX_PROPQUERY_SIZE];
+    char propq[256];
     const struct keytype_desc_st *desc;
     /* The selection that is passed to der2key_decode() */
     int selection;

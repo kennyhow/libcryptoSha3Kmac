@@ -131,8 +131,8 @@ int OSSL_CRMF_pbm_new(OSSL_LIB_CTX *libctx, const char *propq,
                       unsigned char **out, size_t *outlen)
 {
     int mac_nid, hmac_md_nid = NID_undef;
-    char mdname[OSSL_MAX_NAME_SIZE];
-    char hmac_mdname[OSSL_MAX_NAME_SIZE];
+    char mdname[1000];
+    char hmac_mdname[1000];
     EVP_MD *owf = NULL;
     EVP_MD_CTX *ctx = NULL;
     unsigned char basekey[EVP_MAX_MD_SIZE];

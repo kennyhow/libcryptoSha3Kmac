@@ -13,7 +13,6 @@
 
 # include <openssl/core.h>
 # include <openssl/dsa.h>
-# include "internal/ffc.h"
 
 /*
  * DSA Paramgen types
@@ -35,8 +34,6 @@ int ossl_dsa_sign_int(int type, const unsigned char *dgst, int dlen,
                       unsigned int nonce_type, const char *digestname,
                       OSSL_LIB_CTX *libctx, const char *propq);
 
-FFC_PARAMS *ossl_dsa_get0_params(DSA *dsa);
-int ossl_dsa_ffc_params_fromdata(DSA *dsa, const OSSL_PARAM params[]);
 int ossl_dsa_key_fromdata(DSA *dsa, const OSSL_PARAM params[],
                           int include_private);
 DSA *ossl_dsa_key_from_pkcs8(const PKCS8_PRIV_KEY_INFO *p8inf,

@@ -442,7 +442,7 @@ static int ts_RESP_check_request(TS_RESP_CTX *ctx)
     TS_REQ *request = ctx->request;
     TS_MSG_IMPRINT *msg_imprint;
     X509_ALGOR *md_alg;
-    char md_alg_name[OSSL_MAX_NAME_SIZE];
+    char md_alg_name[1000];
     const ASN1_OCTET_STRING *digest;
     const EVP_MD *md = NULL;
     int i, md_size;

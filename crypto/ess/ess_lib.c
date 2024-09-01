@@ -272,7 +272,7 @@ static int find(const ESS_CERT_ID *cid, const ESS_CERT_ID_V2 *cid_v2,
 {
     const X509 *cert;
     EVP_MD *md = NULL;
-    char name[OSSL_MAX_NAME_SIZE];
+    char name[1000];
     unsigned char cert_digest[EVP_MAX_MD_SIZE];
     unsigned int len, cid_hash_len;
     const ESS_ISSUER_SERIAL *is;

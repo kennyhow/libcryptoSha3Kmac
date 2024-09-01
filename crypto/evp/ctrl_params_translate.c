@@ -32,7 +32,6 @@
 #include <openssl/params.h>
 #include "internal/nelem.h"
 #include "internal/cryptlib.h"
-#include "internal/ffc.h"
 #include "crypto/evp.h"
 #include "crypto/dh.h"
 #include "crypto/ec.h"
@@ -205,7 +204,7 @@ struct translation_ctx_st {
      */
     void *orig_p2;
     /* Diverse types of storage for the needy. */
-    char name_buf[OSSL_MAX_NAME_SIZE];
+    char name_buf[1000];
     void *allocated_buf;
     void *bufp;
     size_t buflen;
@@ -993,25 +992,7 @@ static int fix_dh_nid(enum state state,
                       const struct translation_st *translation,
                       struct translation_ctx_st *ctx)
 {
-    int ret;
-
-    if ((ret = default_check(state, translation, ctx)) <= 0)
-        return ret;
-
-    /* This is only settable */
-    if (ctx->action_type != SET)
-        return 0;
-
-    if (state == PRE_CTRL_TO_PARAMS) {
-        if ((ctx->p2 = (char *)ossl_ffc_named_group_get_name
-             (ossl_ffc_uid_to_dh_named_group(ctx->p1))) == NULL) {
-            ERR_raise(ERR_LIB_EVP, EVP_R_INVALID_VALUE);
-            return 0;
-        }
-        ctx->p1 = 0;
-    }
-
-    return default_fixup_args(state, translation, ctx);
+    return 0;
 }
 
 /* EVP_PKEY_CTRL_DH_RFC5114 */
@@ -1019,43 +1000,7 @@ static int fix_dh_nid5114(enum state state,
                           const struct translation_st *translation,
                           struct translation_ctx_st *ctx)
 {
-    int ret;
-
-    if ((ret = default_check(state, translation, ctx)) <= 0)
-        return ret;
-
-    /* This is only settable */
-    if (ctx->action_type != SET)
-        return 0;
-
-    switch (state) {
-    case PRE_CTRL_TO_PARAMS:
-        if ((ctx->p2 = (char *)ossl_ffc_named_group_get_name
-             (ossl_ffc_uid_to_dh_named_group(ctx->p1))) == NULL) {
-            ERR_raise(ERR_LIB_EVP, EVP_R_INVALID_VALUE);
-            return 0;
-        }
-
-        ctx->p1 = 0;
-        break;
-
-    case PRE_CTRL_STR_TO_PARAMS:
-        if (ctx->p2 == NULL)
-            return 0;
-        if ((ctx->p2 = (char *)ossl_ffc_named_group_get_name
-             (ossl_ffc_uid_to_dh_named_group(atoi(ctx->p2)))) == NULL) {
-            ERR_raise(ERR_LIB_EVP, EVP_R_INVALID_VALUE);
-            return 0;
-        }
-
-        ctx->p1 = 0;
-        break;
-
-    default:
-        break;
-    }
-
-    return default_fixup_args(state, translation, ctx);
+    return 0;
 }
 
 /* EVP_PKEY_CTRL_DH_PARAMGEN_TYPE */
@@ -1515,17 +1460,6 @@ static int get_payload_group_name(enum state state,
     switch (EVP_PKEY_get_base_id(pkey)) {
 #ifndef OPENSSL_NO_DH
     case EVP_PKEY_DH:
-        {
-            const DH *dh = EVP_PKEY_get0_DH(pkey);
-            int uid = DH_get_nid(dh);
-
-            if (uid != NID_undef) {
-                const DH_NAMED_GROUP *dh_group =
-                    ossl_ffc_uid_to_dh_named_group(uid);
-
-                ctx->p2 = (char *)ossl_ffc_named_group_get_name(dh_group);
-            }
-        }
         break;
 #endif
 #ifndef OPENSSL_NO_EC

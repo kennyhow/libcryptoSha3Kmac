@@ -635,7 +635,7 @@ X509
     const unsigned char *p = NULL; /* needed for decoding ASN1 */
     int n, outlen = 0;
     EVP_PKEY_CTX *pkctx = NULL; /* private key context */
-    char name[OSSL_MAX_NAME_SIZE];
+    char name[1000];
 
     if (ecert == NULL || ecert->symmAlg == NULL || ecert->encSymmKey == NULL
             || ecert->encValue == NULL || pkey == NULL) {

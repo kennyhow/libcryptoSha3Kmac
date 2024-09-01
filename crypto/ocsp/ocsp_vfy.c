@@ -308,7 +308,7 @@ static int ocsp_match_issuerid(X509 *cert, OCSP_CERTID *cid,
 
     /* If only one ID to match then do it */
     if (cid != NULL) {
-        char name[OSSL_MAX_NAME_SIZE];
+        char name[1000];
         const X509_NAME *iname;
         int mdlen;
         unsigned char md[EVP_MAX_MD_SIZE];

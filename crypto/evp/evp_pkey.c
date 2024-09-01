@@ -75,7 +75,7 @@ EVP_PKEY *EVP_PKCS82PKEY_ex(const PKCS8_PRIV_KEY_INFO *p8, OSSL_LIB_CTX *libctx,
     size_t len;
     OSSL_DECODER_CTX *dctx = NULL;
     const ASN1_OBJECT *algoid = NULL;
-    char keytype[OSSL_MAX_NAME_SIZE];
+    char keytype[1000];
 
     if (p8 == NULL
             || !PKCS8_pkey_get0(&algoid, NULL, NULL, NULL, p8)

@@ -54,7 +54,6 @@ static OSSL_FUNC_keymgmt_dup_fn dh_dup;
 struct dh_gen_ctx {
     OSSL_LIB_CTX *libctx;
 
-    FFC_PARAMS *ffc_params;
     int selection;
     /* All these parameters are used for parameter generation only */
     /* If there is a group name then the remaining parameters are not needed */
@@ -180,10 +179,6 @@ static int dh_match(const void *keydata1, const void *keydata2, int selection)
         ok = ok && key_checked;
     }
     if ((selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0) {
-        FFC_PARAMS *dhparams1 = ossl_dh_get0_params((DH *)dh1);
-        FFC_PARAMS *dhparams2 = ossl_dh_get0_params((DH *)dh2);
-
-        ok = ok && ossl_ffc_params_cmp(dhparams1, dhparams2, 1);
     }
     return ok;
 }
@@ -504,7 +499,6 @@ static int dh_gen_set_template(void *genctx, void *templ)
 
     if (!ossl_prov_is_running() || gctx == NULL || dh == NULL)
         return 0;
-    gctx->ffc_params = ossl_dh_get0_params(dh);
     return 1;
 }
 
@@ -695,115 +689,7 @@ static int dh_gencb(int p, int n, BN_GENCB *cb)
 
 static void *dh_gen(void *genctx, OSSL_CALLBACK *osslcb, void *cbarg)
 {
-    int ret = 0;
-    struct dh_gen_ctx *gctx = genctx;
-    DH *dh = NULL;
-    BN_GENCB *gencb = NULL;
-    FFC_PARAMS *ffc;
-
-    if (!ossl_prov_is_running() || gctx == NULL)
-        return NULL;
-
-    /*
-     * If a group name is selected then the type is group regardless of what
-     * the user selected. This overrides rather than errors for backwards
-     * compatibility.
-     */
-    if (gctx->group_nid != NID_undef)
-        gctx->gen_type = DH_PARAMGEN_TYPE_GROUP;
-
-    /*
-     * Do a bounds check on context gen_type. Must be in range:
-     * DH_PARAMGEN_TYPE_GENERATOR <= gen_type <= DH_PARAMGEN_TYPE_GROUP
-     * Noted here as this needs to be adjusted if a new group type is
-     * added.
-     */
-    if (!ossl_assert((gctx->gen_type >= DH_PARAMGEN_TYPE_GENERATOR)
-                    && (gctx->gen_type <= DH_PARAMGEN_TYPE_GROUP))) {
-        ERR_raise_data(ERR_LIB_PROV, ERR_R_INTERNAL_ERROR,
-                       "gen_type set to unsupported value %d", gctx->gen_type);
-        return NULL;
-    }
-
-    /* For parameter generation - If there is a group name just create it */
-    if (gctx->gen_type == DH_PARAMGEN_TYPE_GROUP
-            && gctx->ffc_params == NULL) {
-        /* Select a named group if there is not one already */
-        if (gctx->group_nid == NID_undef)
-            gctx->group_nid = ossl_dh_get_named_group_uid_from_size(gctx->pbits);
-        if (gctx->group_nid == NID_undef)
-            return NULL;
-        dh = ossl_dh_new_by_nid_ex(gctx->libctx, gctx->group_nid);
-        if (dh == NULL)
-            return NULL;
-        ffc = ossl_dh_get0_params(dh);
-    } else {
-        dh = ossl_dh_new_ex(gctx->libctx);
-        if (dh == NULL)
-            return NULL;
-        ffc = ossl_dh_get0_params(dh);
-
-        /* Copy the template value if one was passed */
-        if (gctx->ffc_params != NULL
-            && !ossl_ffc_params_copy(ffc, gctx->ffc_params))
-            goto end;
-
-        if (!ossl_ffc_params_set_seed(ffc, gctx->seed, gctx->seedlen))
-            goto end;
-        if (gctx->gindex != -1) {
-            ossl_ffc_params_set_gindex(ffc, gctx->gindex);
-            if (gctx->pcounter != -1)
-                ossl_ffc_params_set_pcounter(ffc, gctx->pcounter);
-        } else if (gctx->hindex != 0) {
-            ossl_ffc_params_set_h(ffc, gctx->hindex);
-        }
-        if (gctx->mdname != NULL)
-            ossl_ffc_set_digest(ffc, gctx->mdname, gctx->mdprops);
-        gctx->cb = osslcb;
-        gctx->cbarg = cbarg;
-        gencb = BN_GENCB_new();
-        if (gencb != NULL)
-            BN_GENCB_set(gencb, dh_gencb, genctx);
-
-        if ((gctx->selection & OSSL_KEYMGMT_SELECT_DOMAIN_PARAMETERS) != 0) {
-            /*
-             * NOTE: The old safe prime generator code is not used in fips mode,
-             * (i.e internally it ignores the generator and chooses a named
-             * group based on pbits.
-             */
-            if (gctx->gen_type == DH_PARAMGEN_TYPE_GENERATOR)
-                ret = DH_generate_parameters_ex(dh, gctx->pbits,
-                                                gctx->generator, gencb);
-            else
-                ret = ossl_dh_generate_ffc_parameters(dh, gctx->gen_type,
-                                                      gctx->pbits, gctx->qbits,
-                                                      gencb);
-            if (ret <= 0)
-                goto end;
-        }
-    }
-
-    if ((gctx->selection & OSSL_KEYMGMT_SELECT_KEYPAIR) != 0) {
-        if (ffc->p == NULL || ffc->g == NULL)
-            goto end;
-        if (gctx->priv_len > 0)
-            DH_set_length(dh, (long)gctx->priv_len);
-        ossl_ffc_params_enable_flags(ffc, FFC_PARAM_FLAG_VALIDATE_LEGACY,
-                                     gctx->gen_type == DH_PARAMGEN_TYPE_FIPS_186_2);
-        if (DH_generate_key(dh) <= 0)
-            goto end;
-    }
-    DH_clear_flags(dh, DH_FLAG_TYPE_MASK);
-    DH_set_flags(dh, gctx->dh_type);
-
-    ret = 1;
-end:
-    if (ret <= 0) {
-        DH_free(dh);
-        dh = NULL;
-    }
-    BN_GENCB_free(gencb);
-    return dh;
+    return 0;
 }
 
 static void dh_gen_cleanup(void *genctx)

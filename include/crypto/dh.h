@@ -14,7 +14,6 @@
 # include <openssl/core.h>
 # include <openssl/params.h>
 # include <openssl/dh.h>
-# include "internal/ffc.h"
 
 DH *ossl_dh_new_by_nid_ex(OSSL_LIB_CTX *libctx, int nid);
 DH *ossl_dh_new_ex(OSSL_LIB_CTX *libctx);
@@ -29,7 +28,6 @@ int ossl_dh_gen_type_name2id(const char *name, int type);
 void ossl_dh_cache_named_group(DH *dh);
 int ossl_dh_is_named_safe_prime_group(const DH *dh);
 
-FFC_PARAMS *ossl_dh_get0_params(DH *dh);
 int ossl_dh_get0_nid(const DH *dh);
 int ossl_dh_params_fromdata(DH *dh, const OSSL_PARAM params[]);
 int ossl_dh_key_fromdata(DH *dh, const OSSL_PARAM params[], int include_private);

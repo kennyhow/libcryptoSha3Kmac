@@ -183,7 +183,7 @@ static int x509_pubkey_ex_d2i_ex(ASN1_VALUE **pval,
     /* Try to decode it into an EVP_PKEY with OSSL_DECODER */
     if (ret <= 0 && !pubkey->flag_force_legacy) {
         const unsigned char *p;
-        char txtoidname[OSSL_MAX_NAME_SIZE];
+        char txtoidname[1000];
         size_t slen = publen;
 
         /*

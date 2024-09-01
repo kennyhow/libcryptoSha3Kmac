@@ -34,7 +34,7 @@ static OSSL_FUNC_decoder_set_ctx_params_fn epki2pki_set_ctx_params;
  */
 struct epki2pki_ctx_st {
     PROV_CTX *provctx;
-    char propq[OSSL_MAX_PROPQUERY_SIZE];
+    char propq[256];
 };
 
 static void *epki2pki_newctx(void *provctx)
@@ -154,7 +154,7 @@ static int epki2pki_decode(void *vctx, OSSL_CORE_BIO *cin, int selection,
          * We have something and recognised it as PrivateKeyInfo, so let's
          * pass all the applicable data to the callback.
          */
-        char keytype[OSSL_MAX_NAME_SIZE];
+        char keytype[1000];
         OSSL_PARAM params[5], *p = params;
         int objtype = OSSL_OBJECT_PKEY;
 

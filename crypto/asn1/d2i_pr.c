@@ -33,7 +33,7 @@ d2i_PrivateKey_decoder(int keytype, EVP_PKEY **a, const unsigned char **pp,
     EVP_PKEY *pkey = NULL, *bak_a = NULL;
     EVP_PKEY **ppkey = &pkey;
     const char *key_name = NULL;
-    char keytypebuf[OSSL_MAX_NAME_SIZE];
+    char keytypebuf[1000];
     int ret;
     const unsigned char *p = *pp;
     const char *structure;
