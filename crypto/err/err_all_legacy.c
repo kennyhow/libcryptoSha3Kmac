@@ -17,7 +17,6 @@
 # include "crypto/bnerr.h"
 # include "crypto/buffererr.h"
 # include "crypto/bioerr.h"
-# include "crypto/cmserr.h"
 # include "crypto/comperr.h"
 # include "crypto/conferr.h"
 # include "crypto/cryptoerr.h"
@@ -60,9 +59,6 @@ IMPLEMENT_LEGACY_ERR_LOAD(ASN1)
 IMPLEMENT_LEGACY_ERR_LOAD(BIO)
 IMPLEMENT_LEGACY_ERR_LOAD(BN)
 IMPLEMENT_LEGACY_ERR_LOAD(BUF)
-# ifndef OPENSSL_NO_CMS
-IMPLEMENT_LEGACY_ERR_LOAD(CMS)
-# endif
 # ifndef OPENSSL_NO_COMP
 IMPLEMENT_LEGACY_ERR_LOAD(COMP)
 # endif

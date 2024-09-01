@@ -23,7 +23,6 @@
 #include <openssl/bn.h>
 #include <openssl/evp.h>
 #include <openssl/x509v3.h>
-#include <openssl/cms.h>
 #include "crypto/evp.h"
 #include "crypto/rsa.h"
 #include "rsa_local.h"
@@ -628,17 +627,12 @@ static int pkey_rsa_ctrl(EVP_PKEY_CTX *ctx, int type, int p1, void *p2)
 
     case EVP_PKEY_CTRL_DIGESTINIT:
     case EVP_PKEY_CTRL_PKCS7_SIGN:
-#ifndef OPENSSL_NO_CMS
-    case EVP_PKEY_CTRL_CMS_SIGN:
-#endif
+
     return 1;
 
     case EVP_PKEY_CTRL_PKCS7_ENCRYPT:
     case EVP_PKEY_CTRL_PKCS7_DECRYPT:
-#ifndef OPENSSL_NO_CMS
-    case EVP_PKEY_CTRL_CMS_DECRYPT:
-    case EVP_PKEY_CTRL_CMS_ENCRYPT:
-#endif
+
     if (!pkey_ctx_is_pss(ctx))
         return 1;
     /* fall through */

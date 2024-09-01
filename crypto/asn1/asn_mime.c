@@ -14,7 +14,6 @@
 #include <openssl/x509.h>
 #include <openssl/asn1.h>
 #include <openssl/asn1t.h>
-#include <openssl/cms.h>
 #include "crypto/evp.h"
 #include "internal/bio.h"
 #include "asn1_local.h"
@@ -648,12 +647,7 @@ static int multi_split(BIO *bio, int flags, const char *bound, STACK_OF(BIO) **r
                     return 0;
                 BIO_set_mem_eof_return(bpart, 0);
             } else if (eol) {
-                if (
-#ifndef OPENSSL_NO_CMS
-                    (flags & CMS_BINARY) == 0
-#else
-                    1
-#endif
+                if (1
                         || (flags & SMIME_CRLFEOL) != 0)
                     BIO_write(bpart, "\r\n", 2);
                 else
@@ -1005,21 +999,6 @@ static int strip_eol(char *linebuf, int *plen, int flags)
     int len = *plen;
     char *p, c;
     int is_eol = 0;
-
-#ifndef OPENSSL_NO_CMS
-    if ((flags & CMS_BINARY) != 0) {
-        if (len <= 0 || linebuf[len - 1] != '\n')
-            return 0;
-        if ((flags & SMIME_CRLFEOL) != 0) {
-            if (len <= 1 || linebuf[len - 2] != '\r')
-                return 0;
-            len--;
-        }
-        len--;
-        *plen = len;
-        return 1;
-    }
-#endif
 
     for (p = linebuf + len - 1; len > 0; len--, p--) {
         c = *p;

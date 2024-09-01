@@ -50,11 +50,6 @@ static ASN1_ITEM_EXP *asn1_item_list[] = {
     ASN1_ITEM_ref(BIGNUM),
     ASN1_ITEM_ref(CBIGNUM),
     ASN1_ITEM_ref(CERTIFICATEPOLICIES),
-#ifndef OPENSSL_NO_CMS
-    ASN1_ITEM_ref(CMS_ContentInfo),
-    ASN1_ITEM_ref(CMS_EnvelopedData),
-    ASN1_ITEM_ref(CMS_ReceiptRequest),
-#endif
     ASN1_ITEM_ref(CRL_DIST_POINTS),
 #ifndef OPENSSL_NO_DH
     ASN1_ITEM_ref(DHparams),

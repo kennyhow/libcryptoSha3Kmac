@@ -8,6 +8,7 @@
         "crypto.h": "c",
         "trace.h": "c",
         "macros.h": "c",
-        "cryptlib.h": "c"
+        "cryptlib.h": "c",
+        "cms.h": "c"
     }
 }
